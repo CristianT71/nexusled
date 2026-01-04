@@ -15,10 +15,11 @@ const char* device_topic = "light-bulb";
 
 const uint8_t pin = BUILTIN_LED;
 
+
 WiFiClient espClient;
 PubSubClient client(espClient);
+
 long lastMsg = 0;
-char msg[50];
 bool powerOn = false;
 
 struct Command {
@@ -102,6 +103,7 @@ void processCommand(String message) {
   Command command = deserializeCommand(message);
   Serial.print("Action: ");
   Serial.println(command.action);
+
   if (command.action == (String) "turnOn") {
     Serial.println("on");
     powerOn = true;
@@ -114,9 +116,9 @@ void processCommand(String message) {
   digitalWrite(pin, powerOn ? HIGH : LOW);
 }
 
-Command deserializeCommand(const String& message) {
+Command deserializeCommand(const String& json) {
   JsonDocument root;
-  deserializeJson(root, message);
+  deserializeJson(root, json);
   Command command;
   command.action = root["action"] | "";
   return command;
@@ -125,10 +127,10 @@ Command deserializeCommand(const String& message) {
 void publishStatus() {
   Serial.print("Satus: ");
   Serial.println(powerOn);
-  String tempString = serializeStatus(powerOn);
+  String json = serializeStatus(powerOn);
   Serial.print("Sending status:");
-  Serial.println(tempString);
-  client.publish(controller_topic, tempString.c_str());
+  Serial.println(json);
+  client.publish(controller_topic, json.c_str());
 }
 
 String serializeStatus(bool on) {
@@ -151,3 +153,4 @@ void loop() {
     publishStatus();
   }
 }
+
