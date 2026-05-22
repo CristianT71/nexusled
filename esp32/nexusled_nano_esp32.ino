@@ -13,13 +13,13 @@ WiFiClient netClient;
 
 PubSubClient mqttClient(netClient);
 
-const char* WIFI_SSID = "TU_WIFI";
-const char* WIFI_PASSWORD = "TU_PASSWORD_WIFI";
+const char* WIFI_SSID = "Funcionarios";
+const char* WIFI_PASSWORD = "SomosSena_2025";
 
 const char* MQTT_BROKER = "be185510.ala.us-east-1.emqxsl.com";
 const uint16_t MQTT_PORT = 8883;
-const char* MQTT_USER = "";
-const char* MQTT_PASSWORD = "";
+const char* MQTT_USER = "Nexus";
+const char* MQTT_PASSWORD = "Nexus1234@";
 
 const char* MQTT_TOPIC_CONTROL = "nexusled/led/control";
 const char* MQTT_TOPIC_STATUS = "nexusled/led/status";

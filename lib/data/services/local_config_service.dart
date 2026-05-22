@@ -16,6 +16,8 @@ class LocalConfigService {
     mqtt.topicControl =
         prefs.getString('mqtt.topicControl') ?? mqtt.topicControl;
     mqtt.topicStatus = prefs.getString('mqtt.topicStatus') ?? mqtt.topicStatus;
+    mqtt.topicColor = prefs.getString('mqtt.topicColor') ?? mqtt.topicColor;
+    mqtt.topicHeartbeat = prefs.getString('mqtt.topicHeartbeat') ?? mqtt.topicHeartbeat;
     mqtt.qos = prefs.getInt('mqtt.qos') ?? mqtt.qos;
     mqtt.retain = prefs.getBool('mqtt.retain') ?? mqtt.retain;
     mqtt.keepAlive = prefs.getInt('mqtt.keepAlive') ?? mqtt.keepAlive;
@@ -42,6 +44,8 @@ class LocalConfigService {
     await prefs.setBool('mqtt.useSsl', mqtt.useSsl);
     await prefs.setString('mqtt.topicControl', mqtt.topicControl);
     await prefs.setString('mqtt.topicStatus', mqtt.topicStatus);
+    await prefs.setString('mqtt.topicColor', mqtt.topicColor);
+    await prefs.setString('mqtt.topicHeartbeat', mqtt.topicHeartbeat);
     await prefs.setInt('mqtt.qos', mqtt.qos);
     await prefs.setBool('mqtt.retain', mqtt.retain);
     await prefs.setInt('mqtt.keepAlive', mqtt.keepAlive);

@@ -32,6 +32,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final TextEditingController _wsPort;
   late final TextEditingController _controlTopic;
   late final TextEditingController _statusTopic;
+  late final TextEditingController _colorTopic;
+  late final TextEditingController _heartbeatTopic;
   late final TextEditingController _clientId;
   late final TextEditingController _keepAlive;
   late final TextEditingController _mqttUsername;
@@ -49,6 +51,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _wsPort = TextEditingController(text: '${config.websocketPort}');
     _controlTopic = TextEditingController(text: config.topicControl);
     _statusTopic = TextEditingController(text: config.topicStatus);
+    _colorTopic = TextEditingController(text: config.topicColor);
+    _heartbeatTopic = TextEditingController(text: config.topicHeartbeat);
     _clientId = TextEditingController(text: config.clientId);
     _keepAlive = TextEditingController(text: '${config.keepAlive}');
     _mqttUsername = TextEditingController(text: config.username);
@@ -69,6 +73,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _wsPort.dispose();
     _controlTopic.dispose();
     _statusTopic.dispose();
+    _colorTopic.dispose();
+    _heartbeatTopic.dispose();
     _clientId.dispose();
     _keepAlive.dispose();
     _mqttUsername.dispose();
@@ -86,6 +92,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     config.websocketPort = int.tryParse(_wsPort.text) ?? config.websocketPort;
     config.topicControl = _controlTopic.text;
     config.topicStatus = _statusTopic.text;
+    config.topicColor = _colorTopic.text;
+    config.topicHeartbeat = _heartbeatTopic.text;
     config.clientId = _clientId.text;
     config.keepAlive = int.tryParse(_keepAlive.text) ?? config.keepAlive;
     config.username = _mqttUsername.text;
@@ -155,6 +163,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
               controller: _statusTopic,
               label: 'Tópico de Estado',
               icon: Icons.move_to_inbox_rounded,
+            ),
+            _Field(
+              controller: _colorTopic,
+              label: 'Tópico de Color',
+              icon: Icons.palette_rounded,
+            ),
+            _Field(
+              controller: _heartbeatTopic,
+              label: 'Tópico de Heartbeat',
+              icon: Icons.favorite_rounded,
             ),
             _Field(
               controller: _clientId,

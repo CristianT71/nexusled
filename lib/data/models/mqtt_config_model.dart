@@ -9,6 +9,8 @@ class MqttConfigModel {
     this.useSsl = false,
     this.topicControl = AppStrings.defaultControlTopic,
     this.topicStatus = AppStrings.defaultStatusTopic,
+    this.topicColor = 'nexusled/led/color',
+    this.topicHeartbeat = 'nexusled/heartbeat',
     this.qos = 1,
     this.retain = true,
     this.keepAlive = 60,
@@ -24,6 +26,8 @@ class MqttConfigModel {
   bool useSsl;
   String topicControl;
   String topicStatus;
+  String topicColor;
+  String topicHeartbeat;
   int qos;
   bool retain;
   int keepAlive;

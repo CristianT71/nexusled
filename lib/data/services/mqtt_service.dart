@@ -160,7 +160,7 @@ class MqttService {
     if (!connected) await connect(config);
     final builder = MqttClientPayloadBuilder()..addString(color);
     _client?.publishMessage(
-      'nexusled/led/color',
+      config.topicColor,
       _qos(config.qos),
       builder.payload!,
       retain: config.retain,
