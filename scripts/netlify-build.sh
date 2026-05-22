@@ -17,6 +17,7 @@ export PATH="$FLUTTER_DIR/bin:$PATH"
 
 flutter --version
 flutter config --no-analytics
+flutter clean
 flutter pub get
 flutter build web --release \
   --dart-define=SUPABASE_URL=${SUPABASE_URL:-} \

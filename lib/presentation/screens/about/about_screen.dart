@@ -62,7 +62,19 @@ class AboutScreen extends StatelessWidget {
                     'assets/images/Foto-grupal_nexusled.jpeg',
                     width: double.infinity,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                    errorBuilder: (context, error, stackTrace) {
+                      debugPrint('Error cargando imagen: $error');
+                      return Container(
+                        height: 200,
+                        color: AppColors.purpleBright.withValues(alpha: 0.1),
+                        child: Center(
+                          child: Text(
+                            'Imagen no disponible',
+                            style: TextStyle(color: AppColors.textSecondary),
+                          ),
+                        ),
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 14),
