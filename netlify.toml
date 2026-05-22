@@ -7,12 +7,6 @@
   to = "/index.html"
   status = 200
   force = false
-  conditions = {Role = ["admin"]}
-
-[[redirects]]
-  from = "/assets/*"
-  to = "/assets/:splat"
-  status = 200
 
 [[headers]]
   for = "/assets/*"
