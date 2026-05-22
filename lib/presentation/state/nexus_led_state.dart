@@ -59,6 +59,7 @@ class NexusLedState extends ChangeNotifier {
   int messagesSent = 0;
   int messagesReceived = 0;
   int latencyMs = 0;
+  String ledColor = "white";
   ProfileModel? profile;
   final mqttConfig = MqttConfigModel();
   final supabaseConfig = SupabaseConfigModel();
@@ -177,6 +178,16 @@ class NexusLedState extends ChangeNotifier {
     events.insert(0, event);
     await _supabase.insertLedEvent(event);
     await _upsertDeviceStatus();
+    notifyListeners();
+  }
+
+  Future<void> sendColorCommand(String color) async {
+    final startedAt = DateTime.now();
+    messagesSent++;
+    notifyListeners();
+    await _mqtt.publishColorCommand(mqttConfig, color);
+    latencyMs = DateTime.now().difference(startedAt).inMilliseconds;
+    ledColor = color;
     notifyListeners();
   }
 

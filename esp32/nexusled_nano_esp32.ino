@@ -16,13 +16,14 @@ PubSubClient mqttClient(netClient);
 const char* WIFI_SSID = "TU_WIFI";
 const char* WIFI_PASSWORD = "TU_PASSWORD_WIFI";
 
-const char* MQTT_BROKER = "broker.emqx.io";
+const char* MQTT_BROKER = "TU_BROKER";
 const uint16_t MQTT_PORT = 1883;
 const char* MQTT_USER = "";
 const char* MQTT_PASSWORD = "";
 
 const char* MQTT_TOPIC_CONTROL = "nexusled/led/control";
 const char* MQTT_TOPIC_STATUS = "nexusled/led/status";
+const char* MQTT_TOPIC_COLOR = "nexusled/led/color";
 const char* MQTT_TOPIC_HEARTBEAT = "nexusled/heartbeat";
 
 const char* MQTT_CLIENT_ID_PREFIX = "nexusled_nano_esp32";
@@ -32,8 +33,12 @@ const uint32_t MQTT_RETRY_INTERVAL_MS = 5000;
 const uint32_t HEARTBEAT_INTERVAL_MS = 60000;
 
 const uint8_t LED_PIN = LED_BUILTIN;
+const uint8_t RED_PIN = D3;
+const uint8_t GREEN_PIN = D5;
+const uint8_t BLUE_PIN = D7;
 
 bool ledState = false;
+String currentColor = "white";
 unsigned long lastWiFiRetry = 0;
 unsigned long lastMqttRetry = 0;
 unsigned long lastHeartbeat = 0;
@@ -72,6 +77,21 @@ void setLed(bool on, bool notifyBroker = true) {
   }
 }
 
+void setRgbColor(String color, bool notifyBroker = true) {
+  currentColor = color;
+  color.toLowerCase();
+
+  digitalWrite(RED_PIN, color == "red" ? HIGH : LOW);
+  digitalWrite(GREEN_PIN, color == "green" ? HIGH : LOW);
+  digitalWrite(BLUE_PIN, color == "blue" ? HIGH : LOW);
+
+  Serial.printf("RGB Color -> %s\n", color.c_str());
+
+  if (notifyBroker && mqttClient.connected()) {
+    mqttClient.publish(MQTT_TOPIC_COLOR, color.c_str(), true);
+  }
+}
+
 void handleCommand(const String& command) {
   String normalized = command;
   normalized.trim();
@@ -101,6 +121,12 @@ void onMqttMessage(char* topic, byte* payload, unsigned int length) {
 
   if (topicName == MQTT_TOPIC_CONTROL) {
     handleCommand(message);
+  } else if (topicName == MQTT_TOPIC_COLOR) {
+    String color = message;
+    color.toLowerCase();
+    if (color == "red" || color == "green" || color == "blue") {
+      setRgbColor(color);
+    }
   }
 }
 
@@ -178,6 +204,7 @@ bool connectMqtt() {
   }
 
   mqttClient.subscribe(MQTT_TOPIC_CONTROL, 1);
+  mqttClient.subscribe(MQTT_TOPIC_COLOR, 1);
   publishState(true);
   publishHeartbeat();
 
@@ -216,7 +243,11 @@ void setup() {
   delay(1000);
 
   pinMode(LED_PIN, OUTPUT);
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
   setLed(false, false);
+  setRgbColor("white", false);
 
   deviceId = buildClientId();
   Serial.println();

@@ -15,6 +15,8 @@ class LedControlScreen extends StatelessWidget {
     required this.stateSince,
     required this.latencyMs,
     required this.onCommand,
+    required this.ledColor,
+    required this.onColorCommand,
   });
 
   final bool ledOn;
@@ -23,6 +25,8 @@ class LedControlScreen extends StatelessWidget {
   final DateTime stateSince;
   final int latencyMs;
   final ValueChanged<bool> onCommand;
+  final String ledColor;
+  final ValueChanged<String> onColorCommand;
 
   @override
   Widget build(BuildContext context) {
@@ -64,13 +68,13 @@ class LedControlScreen extends StatelessWidget {
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
                       colors: ledOn
-                          ? [AppColors.ledOn, const Color(0xFF064E3B)]
+                          ? [_getLedColor(ledColor), const Color(0xFF064E3B)]
                           : [const Color(0xFF334155), AppColors.bgSecondary],
                     ),
                     boxShadow: [
                       BoxShadow(
                         color: ledOn
-                            ? AppColors.ledOn.withValues(alpha: 0.65)
+                            ? _getLedColor(ledColor).withValues(alpha: 0.65)
                             : AppColors.ledOff.withValues(alpha: 0.35),
                         blurRadius: ledOn ? 70 : 28,
                         spreadRadius: 4,
@@ -130,7 +134,92 @@ class LedControlScreen extends StatelessWidget {
               ),
             ],
           ),
+          const SizedBox(height: 22),
+          GlassCard(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Control RGB',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
+                ),
+                const SizedBox(height: 16),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    _ColorButton(
+                      label: 'RED',
+                      color: Colors.red,
+                      onPressed: () => onColorCommand('red'),
+                    ),
+                    _ColorButton(
+                      label: 'GREEN',
+                      color: Colors.green,
+                      onPressed: () => onColorCommand('green'),
+                    ),
+                    _ColorButton(
+                      label: 'BLUE',
+                      color: Colors.blue,
+                      onPressed: () => onColorCommand('blue'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ],
+      ),
+    );
+  }
+
+  Color _getLedColor(String color) {
+    switch (color) {
+      case 'red':
+        return Colors.red;
+      case 'green':
+        return Colors.green;
+      case 'blue':
+        return Colors.blue;
+      default:
+        return AppColors.ledOn;
+    }
+  }
+}
+
+class _ColorButton extends StatelessWidget {
+  const _ColorButton({
+    required this.label,
+    required this.color,
+    required this.onPressed,
+  });
+
+  final String label;
+  final Color color;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        elevation: 4,
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1,
+        ),
       ),
     );
   }

@@ -107,6 +107,8 @@ class _CurrentScreen extends StatelessWidget {
         stateSince: state.stateSince,
         latencyMs: state.latencyMs,
         onCommand: state.sendLedCommand,
+        ledColor: state.ledColor,
+        onColorCommand: state.sendColorCommand,
       ),
       AppSection.statistics => StatisticsScreen(
         events: state.events,

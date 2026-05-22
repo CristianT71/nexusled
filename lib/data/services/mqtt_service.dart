@@ -156,6 +156,17 @@ class MqttService {
     );
   }
 
+  Future<void> publishColorCommand(MqttConfigModel config, String color) async {
+    if (!connected) await connect(config);
+    final builder = MqttClientPayloadBuilder()..addString(color);
+    _client?.publishMessage(
+      'nexusled/led/color',
+      _qos(config.qos),
+      builder.payload!,
+      retain: config.retain,
+    );
+  }
+
   Future<void> disconnect() async {
     _client?.disconnect();
     _client = null;
