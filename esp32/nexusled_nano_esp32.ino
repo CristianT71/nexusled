@@ -13,8 +13,9 @@ WiFiClient netClient;
 
 PubSubClient mqttClient(netClient);
 
-const char* WIFI_SSID = "Funcionarios";
-const char* WIFI_PASSWORD = "SomosSena_2025";
+// --- CONFIGURACIÓN ---
+const char* WIFI_SSID = "Wokwi-GUEST";
+const char* WIFI_PASSWORD = "";
 
 const char* MQTT_BROKER = "be185510.ala.us-east-1.emqxsl.com";
 const uint16_t MQTT_PORT = 8883;
@@ -26,12 +27,6 @@ const char* MQTT_TOPIC_STATUS = "nexusled/led/status";
 const char* MQTT_TOPIC_COLOR = "nexusled/led/color";
 const char* MQTT_TOPIC_HEARTBEAT = "nexusled/heartbeat";
 
-const char* MQTT_CLIENT_ID_PREFIX = "nexusled_nano_esp32";
-const uint16_t MQTT_KEEPALIVE_SECONDS = 60;
-const uint32_t WIFI_RETRY_INTERVAL_MS = 10000;
-const uint32_t MQTT_RETRY_INTERVAL_MS = 5000;
-const uint32_t HEARTBEAT_INTERVAL_MS = 60000;
-
 const uint8_t LED_PIN = LED_BUILTIN;
 const uint8_t RED_PIN = D3;
 const uint8_t GREEN_PIN = D5;
@@ -41,253 +36,92 @@ const uint8_t RGB_ON = LOW;
 const uint8_t RGB_OFF = HIGH;
 
 bool ledState = false;
-String currentColor = "white";
-unsigned long lastWiFiRetry = 0;
-unsigned long lastMqttRetry = 0;
 unsigned long lastHeartbeat = 0;
-String deviceId;
+const uint32_t HEARTBEAT_INTERVAL_MS = 60000;
 
-String buildClientId() {
-  char buffer[64];
-  const uint64_t mac = ESP.getEfuseMac();
-  snprintf(
-    buffer,
-    sizeof(buffer),
-    "%s-%04X%08X",
-    MQTT_CLIENT_ID_PREFIX,
-    static_cast<uint16_t>(mac >> 32),
-    static_cast<uint32_t>(mac)
-  );
-  return String(buffer);
-}
-
-void publishState(bool retainMessage = true) {
-  const char* stateText = ledState ? "ON" : "OFF";
-  mqttClient.publish(MQTT_TOPIC_STATUS, stateText, retainMessage);
+// --- FUNCIONES CORE ---
+void publishState() {
+  mqttClient.publish(MQTT_TOPIC_STATUS, ledState ? "ON" : "OFF", true);
 }
 
 void publishHeartbeat() {
   mqttClient.publish(MQTT_TOPIC_HEARTBEAT, "ONLINE", false);
 }
 
-void setLed(bool on, bool notifyBroker = true) {
-  ledState = on;
-  digitalWrite(LED_PIN, on ? HIGH : LOW);
-  Serial.printf("LED -> %s\n", on ? "ON" : "OFF");
-
-  if (notifyBroker && mqttClient.connected()) {
-    publishState(true);
-  }
-}
-
-void setRgbColor(String color, bool notifyBroker = true) {
-  currentColor = color;
-  color.toLowerCase();
-
-  // Apagar todos los pines primero
+void setRgbColor(String color) {
   digitalWrite(RED_PIN, RGB_OFF);
   digitalWrite(GREEN_PIN, RGB_OFF);
   digitalWrite(BLUE_PIN, RGB_OFF);
 
-  // Encender solo el pin correspondiente al color (si no es "off")
-  if (color == "red") {
-    digitalWrite(RED_PIN, RGB_ON);
-  } else if (color == "green") {
-    digitalWrite(GREEN_PIN, RGB_ON);
-  } else if (color == "blue") {
-    digitalWrite(BLUE_PIN, RGB_ON);
-  }
-  // Si es "off", todos los pines ya están apagados
-
-  Serial.printf("RGB Color -> %s\n", color.c_str());
-
-  if (notifyBroker && mqttClient.connected()) {
-    mqttClient.publish(MQTT_TOPIC_COLOR, color.c_str(), true);
-  }
-}
-
-void handleCommand(const String& command) {
-  String normalized = command;
-  normalized.trim();
-  normalized.toUpperCase();
-
-  if (normalized == "ON" || normalized == "1" || normalized == "TRUE") {
-    setLed(true);
-  } else if (normalized == "OFF" || normalized == "0" || normalized == "FALSE") {
-    setLed(false);
-  } else if (normalized == "TOGGLE") {
-    setLed(!ledState);
-  } else if (normalized == "STATUS") {
-    publishState(true);
-  }
+  if (color == "red") digitalWrite(RED_PIN, RGB_ON);
+  else if (color == "green") digitalWrite(GREEN_PIN, RGB_ON);
+  else if (color == "blue") digitalWrite(BLUE_PIN, RGB_ON);
+  
+  Serial.println("Color aplicado: " + color);
 }
 
 void onMqttMessage(char* topic, byte* payload, unsigned int length) {
   String topicName = String(topic);
-  String message;
-  message.reserve(length);
-
-  for (unsigned int i = 0; i < length; i++) {
-    message += static_cast<char>(payload[i]);
-  }
+  String message = "";
+  for (unsigned int i = 0; i < length; i++) message += (char)payload[i];
+  message.trim();
+  message.toLowerCase();
 
   Serial.printf("MQTT [%s] %s\n", topicName.c_str(), message.c_str());
 
   if (topicName == MQTT_TOPIC_CONTROL) {
-    handleCommand(message);
-  } else if (topicName == MQTT_TOPIC_COLOR) {
-    String color = message;
-    color.toLowerCase();
-    if (color == "red" || color == "green" || color == "blue" || color == "off") {
-      setRgbColor(color);
-    }
+    if (message == "on" || message == "1") ledState = true;
+    else if (message == "off" || message == "0") ledState = false;
+    digitalWrite(LED_PIN, ledState ? HIGH : LOW);
+    publishState();
+  } 
+  else if (topicName == MQTT_TOPIC_COLOR) {
+    setRgbColor(message);
+    // IMPORTANTE: Eliminamos el publish aquí para no causar bucles infinitos
   }
 }
 
-bool connectWiFi() {
-  if (WiFi.status() == WL_CONNECTED) {
-    return true;
-  }
-
-  Serial.printf("Conectando a WiFi: %s\n", WIFI_SSID);
+void connectWiFi() {
   WiFi.mode(WIFI_STA);
-  WiFi.setSleep(false);
-  WiFi.setAutoReconnect(true);
-  WiFi.disconnect(true);
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-
-  unsigned long start = millis();
-  while (WiFi.status() != WL_CONNECTED && millis() - start < 20000) {
-    delay(500);
-    Serial.print('.');
-  }
-  Serial.println();
-
-  if (WiFi.status() == WL_CONNECTED) {
-    Serial.println("WiFi conectado");
-    Serial.print("IP: ");
-    Serial.println(WiFi.localIP());
-    return true;
-  }
-
-  Serial.println("No se pudo conectar al WiFi");
-  return false;
+  while (WiFi.status() != WL_CONNECTED) delay(500);
+  Serial.println("WiFi Conectado");
 }
 
-bool connectMqtt() {
-  if (WiFi.status() != WL_CONNECTED) {
-    return false;
-  }
-
-#if USE_SSL_TLS
+void connectMqtt() {
   netClient.setInsecure();
-#endif
-
   mqttClient.setServer(MQTT_BROKER, MQTT_PORT);
   mqttClient.setCallback(onMqttMessage);
-  mqttClient.setKeepAlive(MQTT_KEEPALIVE_SECONDS);
-  mqttClient.setSocketTimeout(15);
-  mqttClient.setBufferSize(256);
-
-  const char* clientId = deviceId.c_str();
-
-  bool connected = false;
-  if (MQTT_USER[0] != '\0') {
-    connected = mqttClient.connect(
-      clientId,
-      MQTT_USER,
-      MQTT_PASSWORD,
-      MQTT_TOPIC_STATUS,
-      1,
-      true,
-      "OFFLINE"
-    );
-  } else {
-    connected = mqttClient.connect(
-      clientId,
-      MQTT_TOPIC_STATUS,
-      1,
-      true,
-      "OFFLINE"
-    );
-  }
-
-  if (!connected) {
-    Serial.printf("Fallo MQTT: %d\n", mqttClient.state());
-    return false;
-  }
-
-  mqttClient.subscribe(MQTT_TOPIC_CONTROL, 1);
-  mqttClient.subscribe(MQTT_TOPIC_COLOR, 1);
   
-  // Asegurar que todos los LEDs estén apagados después de conectar
-  digitalWrite(RED_PIN, RGB_OFF);
-  digitalWrite(GREEN_PIN, RGB_OFF);
-  digitalWrite(BLUE_PIN, RGB_OFF);
-  currentColor = "off";
-  
-  publishState(true);
-  publishHeartbeat();
-
-  Serial.println("MQTT conectado y suscrito al tópico de control");
-  return true;
-}
-
-void ensureConnections() {
-  if (WiFi.status() != WL_CONNECTED) {
-    if (millis() - lastWiFiRetry >= WIFI_RETRY_INTERVAL_MS) {
-      lastWiFiRetry = millis();
-      connectWiFi();
-    }
-    return;
-  }
-
-  if (!mqttClient.connected()) {
-    if (millis() - lastMqttRetry >= MQTT_RETRY_INTERVAL_MS) {
-      lastMqttRetry = millis();
-      connectMqtt();
-    }
-    return;
-  }
-
-  mqttClient.loop();
-
-  if (millis() - lastHeartbeat >= HEARTBEAT_INTERVAL_MS) {
-    lastHeartbeat = millis();
+  if (mqttClient.connect("nexusled_nano_esp32", MQTT_USER, MQTT_PASSWORD, MQTT_TOPIC_STATUS, 1, true, "OFFLINE")) {
+    mqttClient.subscribe(MQTT_TOPIC_CONTROL);
+    mqttClient.subscribe(MQTT_TOPIC_COLOR);
+    publishState();
     publishHeartbeat();
-    // No publicar estado en heartbeat para evitar conflictos
   }
 }
 
 void setup() {
   Serial.begin(115200);
-  delay(1000);
-
   pinMode(LED_PIN, OUTPUT);
   pinMode(RED_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
   pinMode(BLUE_PIN, OUTPUT);
   
-  // Inicializar todos los LEDs apagados explícitamente
-  digitalWrite(LED_PIN, LOW);
   digitalWrite(RED_PIN, RGB_OFF);
   digitalWrite(GREEN_PIN, RGB_OFF);
   digitalWrite(BLUE_PIN, RGB_OFF);
-  ledState = false;
-  currentColor = "white";
-
-  deviceId = buildClientId();
-  Serial.println();
-  Serial.println("============================");
-  Serial.println(" NexusLED Nano ESP32 Sketch ");
-  Serial.println("============================");
-  Serial.print("Client ID: ");
-  Serial.println(deviceId);
 
   connectWiFi();
   connectMqtt();
 }
 
 void loop() {
-  ensureConnections();
+  if (!mqttClient.connected()) connectMqtt();
+  mqttClient.loop();
+
+  if (millis() - lastHeartbeat >= HEARTBEAT_INTERVAL_MS) {
+    lastHeartbeat = millis();
+    publishHeartbeat();
+  }
 }
