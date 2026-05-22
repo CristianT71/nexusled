@@ -95,6 +95,7 @@ class _CurrentScreen extends StatelessWidget {
     return switch (state.section) {
       AppSection.dashboard => DashboardScreen(
         ledOn: state.ledOn,
+        ledColor: state.ledColor,
         events: state.events,
         latencyMs: state.latencyMs,
         stateSince: state.stateSince,

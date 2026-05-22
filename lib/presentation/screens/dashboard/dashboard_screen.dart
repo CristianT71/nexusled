@@ -20,12 +20,14 @@ class DashboardCarousel extends StatefulWidget {
   const DashboardCarousel({
     super.key,
     required this.ledOn,
+    required this.ledColor,
     required this.events,
     required this.latencyMs,
     required this.stateSince,
   });
 
   final bool ledOn;
+  final String ledColor;
   final List<LedEventModel> events;
   final int latencyMs;
   final DateTime stateSince;
@@ -91,11 +93,11 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
                       ? Icons.lightbulb
                       : Icons.lightbulb_outline,
                   title: 'Estado actual',
-                  value: widget.ledOn ? 'Encendido' : 'Apagado',
+                  value: widget.ledOn ? widget.ledColor.toUpperCase() : 'Apagado',
                   subtitle: formatDurationLabel(
                     DateTime.now().difference(widget.stateSince),
                   ),
-                  accent: widget.ledOn ? AppColors.ledOn : AppColors.ledOff,
+                  accent: _getColorValue(widget.ledColor),
                 ),
                 _CarouselPanel(
                   icon: Icons.speed_rounded,
@@ -244,6 +246,7 @@ class DashboardScreen extends StatelessWidget {
   const DashboardScreen({
     super.key,
     required this.ledOn,
+    required this.ledColor,
     required this.events,
     required this.latencyMs,
     required this.stateSince,
@@ -251,6 +254,7 @@ class DashboardScreen extends StatelessWidget {
   });
 
   final bool ledOn;
+  final String ledColor;
   final List<LedEventModel> events;
   final int latencyMs;
   final DateTime stateSince;
@@ -265,6 +269,7 @@ class DashboardScreen extends StatelessWidget {
         children: [
           DashboardCarousel(
             ledOn: ledOn,
+            ledColor: ledColor,
             events: events,
             latencyMs: latencyMs,
             stateSince: stateSince,
@@ -279,10 +284,10 @@ class DashboardScreen extends StatelessWidget {
               SizedBox(
                 width: 250,
                 child: StatCard(
-                  title: 'Estado del LED',
-                  value: ledOn ? 'ENCENDIDO' : 'APAGADO',
+                  title: 'Color LED',
+                  value: ledOn ? ledColor.toUpperCase() : 'APAGADO',
                   icon: Icons.lightbulb_rounded,
-                  color: ledOn ? AppColors.ledOn : AppColors.ledOff,
+                  color: _getColorValue(ledColor),
                 ),
               ),
               SizedBox(
@@ -392,7 +397,7 @@ class DashboardScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  '🥧 Gráfico Circular: Distribución ON/OFF',
+                  '🥧 Gráfico Circular: Distribución de Colores RGB',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 16),
@@ -659,7 +664,7 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Estado actual: ${ledOn ? '🟢 ENCENDIDO' : '🔴 APAGADO'}',
+                  'Estado actual: ${ledOn ? '🟢 ${ledColor.toUpperCase()}' : '🔴 APAGADO'}',
                   style: const TextStyle(color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 18),
@@ -695,21 +700,37 @@ class DashboardScreen extends StatelessWidget {
 
   // Datos para gráfico circular
   List<PieChartSectionData> _generatePieData() {
-    final onCount = events.where((e) => e.newState == 'ON').length;
-    final offCount = events.where((e) => e.newState == 'OFF').length;
-    final total = onCount + offCount;
+    final redCount = events.where((e) => e.color == 'red').length;
+    final greenCount = events.where((e) => e.color == 'green').length;
+    final blueCount = events.where((e) => e.color == 'blue').length;
+    final offCount = events.where((e) => e.color == 'off').length;
+    final total = redCount + greenCount + blueCount + offCount;
 
     return [
       PieChartSectionData(
-        color: AppColors.ledOn,
-        value: total > 0 ? (onCount / total) * 100 : 50,
-        title: 'ON: $onCount',
+        color: Colors.red,
+        value: total > 0 ? (redCount / total) * 100 : 25,
+        title: 'RED: $redCount',
         radius: 60,
         titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
       ),
       PieChartSectionData(
-        color: AppColors.ledOff,
-        value: total > 0 ? (offCount / total) * 100 : 50,
+        color: Colors.green,
+        value: total > 0 ? (greenCount / total) * 100 : 25,
+        title: 'GREEN: $greenCount',
+        radius: 60,
+        titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+      ),
+      PieChartSectionData(
+        color: Colors.blue,
+        value: total > 0 ? (blueCount / total) * 100 : 25,
+        title: 'BLUE: $blueCount',
+        radius: 60,
+        titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+      ),
+      PieChartSectionData(
+        color: Colors.grey,
+        value: total > 0 ? (offCount / total) * 100 : 25,
         title: 'OFF: $offCount',
         radius: 60,
         titleStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
@@ -859,5 +880,18 @@ class DashboardScreen extends StatelessWidget {
       'q3': latencies[(n * 0.75).toInt()],
       'max': latencies.last,
     };
+  }
+
+  Color _getColorValue(String color) {
+    switch (color.toLowerCase()) {
+      case 'red':
+        return Colors.red;
+      case 'green':
+        return Colors.green;
+      case 'blue':
+        return Colors.blue;
+      default:
+        return AppColors.ledOff;
+    }
   }
 }

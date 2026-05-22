@@ -182,6 +182,7 @@ class NexusLedState extends ChangeNotifier {
   }
 
   Future<void> sendColorCommand(String color) async {
+    final previous = ledColor;
     final startedAt = DateTime.now();
     messagesSent++;
     notifyListeners();
@@ -192,6 +193,18 @@ class NexusLedState extends ChangeNotifier {
     if (ledOn) {
       stateSince = DateTime.now();
     }
+    final event = LedEventModel(
+      action: color == 'off' ? 'OFF' : 'COLOR',
+      previousState: previous,
+      newState: color,
+      createdAt: DateTime.now(),
+      latencyMs: latencyMs,
+      confirmed: _mqtt.connected || simulatorActive,
+      color: color,
+    );
+    events.insert(0, event);
+    await _supabase.insertLedEvent(event);
+    await _upsertDeviceStatus();
     notifyListeners();
   }
 

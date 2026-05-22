@@ -8,6 +8,7 @@ class LedEventModel {
     required this.confirmed,
     this.source = 'app',
     this.platform = 'web',
+    this.color,
   });
 
   final String action;
@@ -18,4 +19,5 @@ class LedEventModel {
   final bool confirmed;
   final String source;
   final String platform;
+  final String? color;
 }
