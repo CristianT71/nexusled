@@ -37,6 +37,9 @@ const uint8_t RED_PIN = D3;
 const uint8_t GREEN_PIN = D5;
 const uint8_t BLUE_PIN = D7;
 
+const uint8_t RGB_ON = LOW;
+const uint8_t RGB_OFF = HIGH;
+
 bool ledState = false;
 String currentColor = "white";
 unsigned long lastWiFiRetry = 0;
@@ -82,17 +85,17 @@ void setRgbColor(String color, bool notifyBroker = true) {
   color.toLowerCase();
 
   // Apagar todos los pines primero
-  digitalWrite(RED_PIN, LOW);
-  digitalWrite(GREEN_PIN, LOW);
-  digitalWrite(BLUE_PIN, LOW);
+  digitalWrite(RED_PIN, RGB_OFF);
+  digitalWrite(GREEN_PIN, RGB_OFF);
+  digitalWrite(BLUE_PIN, RGB_OFF);
 
   // Encender solo el pin correspondiente al color (si no es "off")
   if (color == "red") {
-    digitalWrite(RED_PIN, HIGH);
+    digitalWrite(RED_PIN, RGB_ON);
   } else if (color == "green") {
-    digitalWrite(GREEN_PIN, HIGH);
+    digitalWrite(GREEN_PIN, RGB_ON);
   } else if (color == "blue") {
-    digitalWrite(BLUE_PIN, HIGH);
+    digitalWrite(BLUE_PIN, RGB_ON);
   }
   // Si es "off", todos los pines ya están apagados
 
@@ -218,9 +221,9 @@ bool connectMqtt() {
   mqttClient.subscribe(MQTT_TOPIC_COLOR, 1);
   
   // Asegurar que todos los LEDs estén apagados después de conectar
-  digitalWrite(RED_PIN, LOW);
-  digitalWrite(GREEN_PIN, LOW);
-  digitalWrite(BLUE_PIN, LOW);
+  digitalWrite(RED_PIN, RGB_OFF);
+  digitalWrite(GREEN_PIN, RGB_OFF);
+  digitalWrite(BLUE_PIN, RGB_OFF);
   currentColor = "off";
   
   publishState(true);
@@ -267,9 +270,9 @@ void setup() {
   
   // Inicializar todos los LEDs apagados explícitamente
   digitalWrite(LED_PIN, LOW);
-  digitalWrite(RED_PIN, LOW);
-  digitalWrite(GREEN_PIN, LOW);
-  digitalWrite(BLUE_PIN, LOW);
+  digitalWrite(RED_PIN, RGB_OFF);
+  digitalWrite(GREEN_PIN, RGB_OFF);
+  digitalWrite(BLUE_PIN, RGB_OFF);
   ledState = false;
   currentColor = "white";
 

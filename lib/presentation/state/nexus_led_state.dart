@@ -188,6 +188,10 @@ class NexusLedState extends ChangeNotifier {
     await _mqtt.publishColorCommand(mqttConfig, color);
     latencyMs = DateTime.now().difference(startedAt).inMilliseconds;
     ledColor = color;
+    ledOn = color != 'off';
+    if (ledOn) {
+      stateSince = DateTime.now();
+    }
     notifyListeners();
   }
 
