@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../widgets/common/animated_background.dart';
@@ -100,7 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 14),
                 OutlinedButton.icon(
                   onPressed: widget.loading ? null : widget.onGoogleLogin,
-                  icon: const FaIcon(FontAwesomeIcons.google, size: 18),
+                  icon: const Icon(Icons.g_mobiledata_rounded, size: 20),
                   label: const Text('Iniciar sesión con Google'),
                 ),
                 if (widget.error != null) ...[

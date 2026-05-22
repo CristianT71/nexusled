@@ -12,7 +12,6 @@ Aplicación Flutter para control remoto IoT de un LED usando una arquitectura pr
 - Estadísticas, quiénes somos, servicios, información del sistema, configuración MQTT, soporte y perfil.
 - Configuración MQTT y Supabase editable dentro de la app.
 - Autenticación Supabase configurable desde la app.
-- Biometría con `local_auth`.
 - Permisos Android/iOS configurados.
 
 ## Ejecutar
