@@ -81,9 +81,19 @@ void setRgbColor(String color, bool notifyBroker = true) {
   currentColor = color;
   color.toLowerCase();
 
-  digitalWrite(RED_PIN, color == "red" ? HIGH : LOW);
-  digitalWrite(GREEN_PIN, color == "green" ? HIGH : LOW);
-  digitalWrite(BLUE_PIN, color == "blue" ? HIGH : LOW);
+  // Apagar todos los pines primero
+  digitalWrite(RED_PIN, LOW);
+  digitalWrite(GREEN_PIN, LOW);
+  digitalWrite(BLUE_PIN, LOW);
+
+  // Encender solo el pin correspondiente al color
+  if (color == "red") {
+    digitalWrite(RED_PIN, HIGH);
+  } else if (color == "green") {
+    digitalWrite(GREEN_PIN, HIGH);
+  } else if (color == "blue") {
+    digitalWrite(BLUE_PIN, HIGH);
+  }
 
   Serial.printf("RGB Color -> %s\n", color.c_str());
 
