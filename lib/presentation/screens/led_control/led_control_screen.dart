@@ -145,27 +145,34 @@ class LedControlScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 16),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  alignment: WrapAlignment.center,
-                  children: [
-                    _ColorButton(
-                      label: 'RED',
-                      color: Colors.red,
-                      onPressed: () => onColorCommand('red'),
-                    ),
-                    _ColorButton(
-                      label: 'GREEN',
-                      color: Colors.green,
-                      onPressed: () => onColorCommand('green'),
-                    ),
-                    _ColorButton(
-                      label: 'BLUE',
-                      color: Colors.blue,
-                      onPressed: () => onColorCommand('blue'),
-                    ),
-                  ],
+                _ColorControlRow(
+                  label: 'RED',
+                  color: Colors.red,
+                  onTurnOn: () {
+                    onCommand(true);
+                    onColorCommand('red');
+                  },
+                  onTurnOff: () => onCommand(false),
+                ),
+                const SizedBox(height: 12),
+                _ColorControlRow(
+                  label: 'GREEN',
+                  color: Colors.green,
+                  onTurnOn: () {
+                    onCommand(true);
+                    onColorCommand('green');
+                  },
+                  onTurnOff: () => onCommand(false),
+                ),
+                const SizedBox(height: 12),
+                _ColorControlRow(
+                  label: 'BLUE',
+                  color: Colors.blue,
+                  onTurnOn: () {
+                    onCommand(true);
+                    onColorCommand('blue');
+                  },
+                  onTurnOff: () => onCommand(false),
                 ),
               ],
             ),
@@ -189,38 +196,78 @@ class LedControlScreen extends StatelessWidget {
   }
 }
 
-class _ColorButton extends StatelessWidget {
-  const _ColorButton({
+class _ColorControlRow extends StatelessWidget {
+  const _ColorControlRow({
     required this.label,
     required this.color,
-    required this.onPressed,
+    required this.onTurnOn,
+    required this.onTurnOff,
   });
 
   final String label;
   final Color color;
-  final VoidCallback onPressed;
+  final VoidCallback onTurnOn;
+  final VoidCallback onTurnOff;
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+    return Row(
+      children: [
+        Container(
+          width: 50,
+          height: 50,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Center(
+            child: Text(
+              label[0],
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+          ),
         ),
-        elevation: 4,
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 1,
+        const SizedBox(width: 16),
+        Expanded(
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
         ),
-      ),
+        const SizedBox(width: 8),
+        ElevatedButton(
+          onPressed: onTurnOn,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: color,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          child: const Text('ON'),
+        ),
+        const SizedBox(width: 8),
+        ElevatedButton(
+          onPressed: onTurnOff,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey[700],
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          child: const Text('OFF'),
+        ),
+      ],
     );
   }
 }
