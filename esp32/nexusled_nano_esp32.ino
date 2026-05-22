@@ -2,7 +2,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 
-#define USE_SSL_TLS 0
+#define USE_SSL_TLS 1
 
 #if USE_SSL_TLS
 #include <WiFiClientSecure.h>
@@ -16,8 +16,8 @@ PubSubClient mqttClient(netClient);
 const char* WIFI_SSID = "TU_WIFI";
 const char* WIFI_PASSWORD = "TU_PASSWORD_WIFI";
 
-const char* MQTT_BROKER = "TU_BROKER";
-const uint16_t MQTT_PORT = 1883;
+const char* MQTT_BROKER = "be185510.ala.us-east-1.emqxsl.com";
+const uint16_t MQTT_PORT = 8883;
 const char* MQTT_USER = "";
 const char* MQTT_PASSWORD = "";
 
@@ -256,8 +256,12 @@ void setup() {
   pinMode(RED_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
   pinMode(BLUE_PIN, OUTPUT);
+  
+  // Inicializar todos los LEDs apagados
   setLed(false, false);
-  setRgbColor("white", false);
+  digitalWrite(RED_PIN, LOW);
+  digitalWrite(GREEN_PIN, LOW);
+  digitalWrite(BLUE_PIN, LOW);
 
   deviceId = buildClientId();
   Serial.println();
