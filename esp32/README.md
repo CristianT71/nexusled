@@ -7,8 +7,11 @@ Este archivo es el código que puedes cargar en el Arduino IDE para el Nano ESP3
 - conecta el ESP32 a WiFi;
 - se conecta al broker MQTT;
 - se suscribe al tópico de control `nexusled/led/control`;
-- recibe `ON`, `OFF` y `TOGGLE`;
-- enciende o apaga el LED;
+- se suscribe al tópico de color `nexusled/led/color`;
+- recibe comandos de color: `red`, `green`, `blue`, `off`;
+- controla un LED RGB con tres colores (ROJO, VERDE, AZUL);
+- enciende el color seleccionado y apaga los demás;
+- apaga todos los colores con el comando `off`;
 - publica el estado en `nexusled/led/status`;
 - publica un heartbeat en `nexusled/heartbeat`.
 
@@ -33,16 +36,27 @@ Abre `nexusled_nano_esp32.ino` y modifica estas constantes:
 ## Tópicos usados por NexusLED
 
 - Control: `nexusled/led/control`
+- Color: `nexusled/led/color`
 - Estado: `nexusled/led/status`
 - Heartbeat: `nexusled/heartbeat`
 
 ## Cómo funciona con la app
 
-1. La app publica un comando en el tópico de control.
+1. La app publica un comando de color en el tópico de color.
 2. El ESP32 lo recibe porque está suscrito a ese tópico.
-3. El ESP32 cambia el estado del LED.
+3. El ESP32 enciende el color seleccionado y apaga los demás.
 4. El ESP32 publica el nuevo estado en el tópico de estado.
 5. NexusLED puede usar esa información para monitoreo y sincronización.
+
+## Pines del LED RGB
+
+El sketch usa estos pines para el LED RGB:
+
+- RED_PIN: D3
+- GREEN_PIN: D5
+- BLUE_PIN: D7
+
+Cada pin controla un color del LED RGB. Cuando se selecciona un color, ese pin se pone en HIGH y los demás en LOW.
 
 ## SSL/TLS
 

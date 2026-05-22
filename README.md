@@ -15,8 +15,9 @@ NexusLED centraliza el control de un sistema IoT con estas funciones principales
 - iniciar sesión con Google;
 - registrar usuarios nuevos;
 - guardar y recuperar configuración MQTT;
-- enviar comandos ON, OFF y alternar al LED;
-- registrar eventos con latencia, confirmación y plataforma;
+- controlar un LED RGB con tres colores (RED, GREEN, BLUE);
+- enviar comandos de color y apagado al LED;
+- registrar eventos con color, latencia, confirmación y plataforma;
 - mostrar estadísticas y estado del sistema en tiempo real;
 - operar con simulador cuando no hay hardware conectado;
 - persistir la configuración localmente para que no se pierda entre sesiones.
@@ -69,15 +70,19 @@ También incluye un carrusel de resumen automático para mostrar información im
 
 Es la pantalla operativa. Desde aquí se envían comandos MQTT para:
 
-- encender el LED;
-- apagar el LED;
-- alternar el estado actual.
+- encender el LED en color ROJO;
+- encender el LED en color VERDE;
+- encender el LED en color AZUL;
+- apagar el LED.
+
+Cada color tiene sus propios botones ON/OFF para control independiente.
 
 Además muestra:
 
 - si la conexión MQTT está activa;
 - el broker y puerto actuales;
 - el tópico de control;
+- el tópico de color;
 - el tiempo desde el último cambio;
 - la latencia más reciente.
 
@@ -87,9 +92,8 @@ Resume los eventos del sistema con:
 
 - total de eventos;
 - promedio de latencia;
-- cantidad de encendidos y apagados;
-- distribución ON/OFF;
-- tabla con eventos recientes.
+- distribución de colores RGB (RED, GREEN, BLUE, OFF);
+- tabla con eventos recientes que incluye el color seleccionado.
 
 ### Información del sistema
 
@@ -112,6 +116,8 @@ Aquí se cargan y editan los datos más importantes del proyecto:
 - puerto WebSocket;
 - tópico de control;
 - tópico de estado;
+- tópico de color;
+- tópico de heartbeat;
 - client ID;
 - keep alive;
 - usuario y contraseña MQTT;
@@ -314,5 +320,5 @@ La distribución publicada del proyecto se maneja así:
 
 - conectar el sketch del ESP32 con los tópicos definitivos;
 - endurecer políticas de seguridad en Supabase;
-- agregar más métricas históricas;
+- agregar más métricas históricas por color;
 - mejorar la vista de soporte con documentación externa.

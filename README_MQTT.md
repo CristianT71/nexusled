@@ -16,7 +16,9 @@ El ESP32 es el microcontrolador que recibe los mensajes MQTT desde el broker y e
 
 En este proyecto el ESP32 puede:
 
-- encender el LED;
+- encender el LED en color ROJO;
+- encender el LED en color VERDE;
+- encender el LED en color AZUL;
 - apagar el LED;
 - reportar su estado;
 - enviar confirmaciones o eventos.
@@ -41,7 +43,7 @@ Se usa para organizar los mensajes. Por ejemplo:
 
 - un tópico para comandos;
 - un tópico para estado;
-- un tópico para eventos;
+- un tópico para color (RGB);
 - un tópico para latidos o heartbeat.
 
 Si la app publica en un tópico, el ESP32 debe estar suscrito a ese mismo tópico para recibirlo.
@@ -54,9 +56,10 @@ Publicar es enviar un mensaje a un tópico.
 
 En NexusLED la app publica comandos como:
 
-- encender;
-- apagar;
-- alternar.
+- encender en color ROJO;
+- encender en color VERDE;
+- encender en color AZUL;
+- apagar.
 
 ### Suscribirse
 
@@ -86,6 +89,8 @@ En la pantalla de configuración MQTT y Supabase se guardan estos datos:
 - puerto WebSocket;
 - tópico de control;
 - tópico de estado;
+- tópico de color;
+- tópico de heartbeat;
 - client ID;
 - usuario MQTT;
 - contraseña MQTT;
@@ -156,11 +161,11 @@ Ayuda a mantener viva la sesión con el broker.
 Uso básico:
 
 1. Abre la pantalla de configuración MQTT.
-2. Escribe el broker, puertos y tópicos.
+2. Escribe el broker, puertos y tópicos (incluyendo tópico de color).
 3. Guarda la configuración.
 4. Prueba la conexión.
 5. Ve a Control LED.
-6. Envia encender, apagar o alternar.
+6. Envia comandos de color (RED, GREEN, BLUE) o apagar (OFF).
 
 ## Resumen rápido
 
