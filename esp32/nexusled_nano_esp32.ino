@@ -135,7 +135,7 @@ void onMqttMessage(char* topic, byte* payload, unsigned int length) {
   } else if (topicName == MQTT_TOPIC_COLOR) {
     String color = message;
     color.toLowerCase();
-    if (color == "red" || color == "green" || color == "blue") {
+    if (color == "red" || color == "green" || color == "blue" || color == "off") {
       setRgbColor(color);
     }
   }
@@ -216,6 +216,13 @@ bool connectMqtt() {
 
   mqttClient.subscribe(MQTT_TOPIC_CONTROL, 1);
   mqttClient.subscribe(MQTT_TOPIC_COLOR, 1);
+  
+  // Asegurar que todos los LEDs estén apagados después de conectar
+  digitalWrite(RED_PIN, LOW);
+  digitalWrite(GREEN_PIN, LOW);
+  digitalWrite(BLUE_PIN, LOW);
+  currentColor = "off";
+  
   publishState(true);
   publishHeartbeat();
 
@@ -245,7 +252,7 @@ void ensureConnections() {
   if (millis() - lastHeartbeat >= HEARTBEAT_INTERVAL_MS) {
     lastHeartbeat = millis();
     publishHeartbeat();
-    publishState(true);
+    // No publicar estado en heartbeat para evitar conflictos
   }
 }
 
