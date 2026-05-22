@@ -56,6 +56,16 @@ class AboutScreen extends StatelessWidget {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900),
                 ),
                 const SizedBox(height: 14),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    'assets/images/Foto-grupal_nexusled.jpeg',
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+                  ),
+                ),
+                const SizedBox(height: 14),
                 Text(
                   'NexusLED es un proyecto desarrollado por aprendices del SENA en el programa Tecnólogo en Análisis y Desarrollo de Software.',
                   style: TextStyle(

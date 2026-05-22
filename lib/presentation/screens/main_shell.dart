@@ -10,6 +10,8 @@ import 'dashboard/dashboard_screen.dart';
 import 'led_control/led_control_screen.dart';
 import 'profile/profile_screen.dart';
 import 'services/services_screen.dart';
+import 'settings/http_settings_screen.dart';
+import 'settings/other_protocols_screen.dart';
 import 'settings/settings_screen.dart';
 import 'statistics/statistics_screen.dart';
 import 'support/support_screen.dart';
@@ -124,12 +126,20 @@ class _CurrentScreen extends StatelessWidget {
         onReconnect: state.testConnection,
         onSimulatorChanged: state.toggleSimulator,
       ),
+      AppSection.connections => SettingsScreen(
+        config: state.mqttConfig,
+        supabaseConfig: state.supabaseConfig,
+        onSave: state.saveConfiguration,
+        onTest: state.testConnection,
+      ),
       AppSection.settings => SettingsScreen(
         config: state.mqttConfig,
         supabaseConfig: state.supabaseConfig,
         onSave: state.saveConfiguration,
         onTest: state.testConnection,
       ),
+      AppSection.httpSettings => const HttpSettingsScreen(),
+      AppSection.otherProtocols => const OtherProtocolsScreen(),
       AppSection.support => const SupportScreen(),
       AppSection.profile => ProfileScreen(
         profile: state.profile,

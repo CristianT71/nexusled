@@ -19,7 +19,10 @@ enum AppSection {
   about,
   services,
   systemInfo,
+  connections,
   settings,
+  httpSettings,
+  otherProtocols,
   support,
   profile,
 }
@@ -33,7 +36,10 @@ extension AppSectionDetails on AppSection {
       AppSection.about => 'Quiénes Somos',
       AppSection.services => 'Servicios',
       AppSection.systemInfo => 'Información del Sistema',
+      AppSection.connections => 'Conexiones',
       AppSection.settings => 'Configuración MQTT',
+      AppSection.httpSettings => 'Configuración HTTP',
+      AppSection.otherProtocols => 'Otros Protocolos',
       AppSection.support => 'Soporte y Ayuda',
       AppSection.profile => 'Perfil de Usuario',
     };

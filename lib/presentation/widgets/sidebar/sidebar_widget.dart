@@ -89,8 +89,7 @@ class SidebarWidget extends StatelessWidget {
                     onSelect: onSelect,
                   ),
                   _SectionLabel('CONFIGURACIÓN', expanded: expanded),
-                  _Item(
-                    section: AppSection.settings,
+                  _ConnectionsItem(
                     current: current,
                     expanded: expanded,
                     onSelect: onSelect,
@@ -245,7 +244,10 @@ class _Item extends StatelessWidget {
       AppSection.about => Icons.groups_rounded,
       AppSection.services => Icons.rocket_launch_rounded,
       AppSection.systemInfo => Icons.info_rounded,
+      AppSection.connections => Icons.hub_rounded,
       AppSection.settings => Icons.settings_rounded,
+      AppSection.httpSettings => Icons.http_rounded,
+      AppSection.otherProtocols => Icons.device_hub_rounded,
       AppSection.support => Icons.support_agent_rounded,
       AppSection.profile => Icons.person_rounded,
     };
@@ -287,6 +289,92 @@ class _Item extends StatelessWidget {
                   ),
                 )
               : null,
+        ),
+      ),
+    );
+  }
+}
+
+
+class _ConnectionsItem extends StatelessWidget {
+  const _ConnectionsItem({
+    required this.current,
+    required this.expanded,
+    required this.onSelect,
+  });
+
+  final AppSection current;
+  final bool expanded;
+  final ValueChanged<AppSection> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final active = current == AppSection.connections ||
+        current == AppSection.settings ||
+        current == AppSection.httpSettings ||
+        current == AppSection.otherProtocols;
+
+    if (!expanded) {
+      return _Item(
+        section: AppSection.connections,
+        current: current,
+        expanded: expanded,
+        onSelect: onSelect,
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      decoration: BoxDecoration(
+        color: active
+            ? AppColors.purpleBright.withValues(alpha: 0.16)
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(14),
+        border: active
+            ? const Border(
+                left: BorderSide(color: AppColors.purpleGlow, width: 3),
+              )
+            : null,
+      ),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          initiallyExpanded: active,
+          tilePadding: const EdgeInsets.symmetric(horizontal: 8),
+          childrenPadding: const EdgeInsets.only(left: 18, right: 6, bottom: 6),
+          leading: Icon(
+            Icons.hub_rounded,
+            color: active ? AppColors.purpleGlow : AppColors.textMuted,
+          ),
+          iconColor: AppColors.purpleGlow,
+          collapsedIconColor: AppColors.textMuted,
+          title: Text(
+            AppSection.connections.title,
+            style: TextStyle(
+              color: active ? AppColors.textPrimary : AppColors.textSecondary,
+              fontWeight: active ? FontWeight.w800 : FontWeight.w500,
+            ),
+          ),
+          children: [
+            _Item(
+              section: AppSection.settings,
+              current: current,
+              expanded: expanded,
+              onSelect: onSelect,
+            ),
+            _Item(
+              section: AppSection.httpSettings,
+              current: current,
+              expanded: expanded,
+              onSelect: onSelect,
+            ),
+            _Item(
+              section: AppSection.otherProtocols,
+              current: current,
+              expanded: expanded,
+              onSelect: onSelect,
+            ),
+          ],
         ),
       ),
     );
