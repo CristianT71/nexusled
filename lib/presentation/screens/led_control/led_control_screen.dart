@@ -110,31 +110,6 @@ class LedControlScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 22),
-          Wrap(
-            spacing: 14,
-            runSpacing: 14,
-            alignment: WrapAlignment.center,
-            children: [
-              NexusButton(
-                label: 'ENCENDER',
-                onPressed: () => onCommand(true),
-                icon: Icons.flash_on_rounded,
-                colors: const [Color(0xFF16A34A), AppColors.ledOn],
-              ),
-              NexusButton(
-                label: 'APAGAR',
-                onPressed: () => onCommand(false),
-                icon: Icons.power_settings_new_rounded,
-                colors: const [Color(0xFF991B1B), AppColors.ledOff],
-              ),
-              NexusButton(
-                label: 'ALTERNAR',
-                onPressed: () => onCommand(!ledOn),
-                icon: Icons.sync_rounded,
-              ),
-            ],
-          ),
-          const SizedBox(height: 22),
           GlassCard(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -148,31 +123,22 @@ class LedControlScreen extends StatelessWidget {
                 _ColorControlRow(
                   label: 'RED',
                   color: Colors.red,
-                  onTurnOn: () {
-                    onCommand(true);
-                    onColorCommand('red');
-                  },
-                  onTurnOff: () => onCommand(false),
+                  onTurnOn: () => onColorCommand('red'),
+                  onTurnOff: () => onColorCommand('off'),
                 ),
                 const SizedBox(height: 12),
                 _ColorControlRow(
                   label: 'GREEN',
                   color: Colors.green,
-                  onTurnOn: () {
-                    onCommand(true);
-                    onColorCommand('green');
-                  },
-                  onTurnOff: () => onCommand(false),
+                  onTurnOn: () => onColorCommand('green'),
+                  onTurnOff: () => onColorCommand('off'),
                 ),
                 const SizedBox(height: 12),
                 _ColorControlRow(
                   label: 'BLUE',
                   color: Colors.blue,
-                  onTurnOn: () {
-                    onCommand(true);
-                    onColorCommand('blue');
-                  },
-                  onTurnOff: () => onCommand(false),
+                  onTurnOn: () => onColorCommand('blue'),
+                  onTurnOff: () => onColorCommand('off'),
                 ),
               ],
             ),

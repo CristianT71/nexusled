@@ -86,7 +86,7 @@ void setRgbColor(String color, bool notifyBroker = true) {
   digitalWrite(GREEN_PIN, LOW);
   digitalWrite(BLUE_PIN, LOW);
 
-  // Encender solo el pin correspondiente al color
+  // Encender solo el pin correspondiente al color (si no es "off")
   if (color == "red") {
     digitalWrite(RED_PIN, HIGH);
   } else if (color == "green") {
@@ -94,18 +94,12 @@ void setRgbColor(String color, bool notifyBroker = true) {
   } else if (color == "blue") {
     digitalWrite(BLUE_PIN, HIGH);
   }
+  // Si es "off", todos los pines ya están apagados
 
-  // Encender el LED principal automáticamente al seleccionar un color
-  if (!ledState) {
-    ledState = true;
-    digitalWrite(LED_PIN, HIGH);
-  }
-
-  Serial.printf("RGB Color -> %s, LED -> %s\n", color.c_str(), ledState ? "ON" : "OFF");
+  Serial.printf("RGB Color -> %s\n", color.c_str());
 
   if (notifyBroker && mqttClient.connected()) {
     mqttClient.publish(MQTT_TOPIC_COLOR, color.c_str(), true);
-    publishState(true);
   }
 }
 
