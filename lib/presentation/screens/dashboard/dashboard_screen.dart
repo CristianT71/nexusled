@@ -43,6 +43,19 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
 
   static const _pagesCount = 4;
 
+  Color _getColorValue(String color) {
+    switch (color.toLowerCase()) {
+      case 'red':
+        return Colors.red;
+      case 'green':
+        return Colors.green;
+      case 'blue':
+        return Colors.blue;
+      default:
+        return AppColors.ledOff;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
