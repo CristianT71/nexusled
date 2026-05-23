@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/utils/browser_path.dart';
 import '../models/led_event_model.dart';
 import '../models/mqtt_config_model.dart';
 import '../models/profile_model.dart';
@@ -57,24 +58,32 @@ class SupabaseService {
   Future<void> signInWithGoogle() async {
     final supabase = client;
     if (supabase == null) throw StateError('Supabase no está configurado.');
+    final nextPath = browserCurrentPath();
     final redirectUrl = kIsWeb
-        ? 'https://nexusled.netlify.app/auth/callback'
-        : 'io.supabase.nexusled://login-callback/';
+        ? 'https://nexusled.netlify.app/auth/callback?next=${Uri.encodeComponent(nextPath)}'
+        : 'io.supabase.nexusled://login-callback?next=${Uri.encodeComponent(nextPath)}';
     await supabase.auth.signInWithOAuth(
       OAuthProvider.google,
       redirectTo: redirectUrl,
+      authScreenLaunchMode: kIsWeb
+          ? LaunchMode.platformDefault
+          : LaunchMode.externalApplication,
     );
   }
 
   Future<void> signInWithGithub() async {
     final supabase = client;
     if (supabase == null) throw StateError('Supabase no está configurado.');
+    final nextPath = browserCurrentPath();
     final redirectUrl = kIsWeb
-        ? 'https://nexusled.netlify.app/auth/callback'
-        : 'io.supabase.nexusled://login-callback/';
+        ? 'https://nexusled.netlify.app/auth/callback?next=${Uri.encodeComponent(nextPath)}'
+        : 'io.supabase.nexusled://login-callback?next=${Uri.encodeComponent(nextPath)}';
     await supabase.auth.signInWithOAuth(
       OAuthProvider.github,
       redirectTo: redirectUrl,
+      authScreenLaunchMode: kIsWeb
+          ? LaunchMode.platformDefault
+          : LaunchMode.externalApplication,
     );
   }
 

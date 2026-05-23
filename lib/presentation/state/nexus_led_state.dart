@@ -1,5 +1,9 @@
-import 'package:flutter/foundation.dart';
+import 'dart:async';
 
+import 'package:flutter/foundation.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../../core/utils/browser_path.dart';
 import '../../data/models/led_event_model.dart';
 import '../../data/models/mqtt_config_model.dart';
 import '../../data/models/profile_model.dart';
@@ -43,6 +47,43 @@ extension AppSectionDetails on AppSection {
       AppSection.profile => 'Perfil de Usuario',
     };
   }
+
+  String get path {
+    return switch (this) {
+      AppSection.dashboard => '/dashboard',
+      AppSection.control => '/control',
+      AppSection.statistics => '/statistics',
+      AppSection.about => '/about',
+      AppSection.services => '/services',
+      AppSection.systemInfo => '/system-info',
+      AppSection.connections => '/connections',
+      AppSection.settings => '/settings',
+      AppSection.httpSettings => '/http-settings',
+      AppSection.otherProtocols => '/other-protocols',
+      AppSection.support => '/support',
+      AppSection.profile => '/profile',
+    };
+  }
+}
+
+AppSection? appSectionFromPath(String path) {
+  final normalizedPath = Uri.parse(path).path.replaceAll(RegExp(r'/+$'), '');
+  return switch (normalizedPath) {
+    '' || '/' || '/login' || '/register' || '/auth/callback' => null,
+    '/dashboard' => AppSection.dashboard,
+    '/control' => AppSection.control,
+    '/statistics' => AppSection.statistics,
+    '/about' => AppSection.about,
+    '/services' => AppSection.services,
+    '/system-info' => AppSection.systemInfo,
+    '/connections' => AppSection.connections,
+    '/settings' => AppSection.settings,
+    '/http-settings' => AppSection.httpSettings,
+    '/other-protocols' => AppSection.otherProtocols,
+    '/support' => AppSection.support,
+    '/profile' => AppSection.profile,
+    _ => null,
+  };
 }
 
 class NexusLedState extends ChangeNotifier {
@@ -67,6 +108,7 @@ class NexusLedState extends ChangeNotifier {
   final _camera = CameraService();
   final _permissions = PermissionService();
   final events = <LedEventModel>[];
+  StreamSubscription<AuthState>? _authStateSubscription;
 
   Future<void> initialize() async {
     loading = true;
@@ -74,12 +116,52 @@ class NexusLedState extends ChangeNotifier {
     notifyListeners();
     try {
       await _supabase.initialize();
+      _authStateSubscription ??= _supabase.authStateChanges?.listen((
+        state,
+      ) async {
+        authenticated = state.session != null;
+        if (!authenticated) {
+          profile = null;
+          events.clear();
+          if (kIsWeb) {
+            browserReplacePath('/login');
+          }
+          notifyListeners();
+          return;
+        }
+
+        await refreshRemoteData();
+        if (kIsWeb) {
+          final nextPath = Uri.base.queryParameters['next'];
+          final targetPath = nextPath != null && nextPath.isNotEmpty
+              ? nextPath
+              : appSectionFromPath(browserCurrentPath())?.path ??
+                    AppSection.dashboard.path;
+          final targetSection = appSectionFromPath(targetPath);
+          if (targetSection != null) {
+            section = targetSection;
+            browserReplacePath(targetSection.path);
+          } else {
+            browserReplacePath('/dashboard');
+          }
+        }
+        notifyListeners();
+      });
       authenticated = _supabase.authenticated;
       if (authenticated) {
+        if (kIsWeb) {
+          final initialSection = appSectionFromPath(browserCurrentPath());
+          if (initialSection != null) {
+            section = initialSection;
+          }
+        }
         await _syncRemoteMqttConfig();
         await _localConfig.save(mqttConfig);
       } else {
         await _localConfig.load(mqttConfig);
+        if (kIsWeb && appSectionFromPath(browserCurrentPath()) == null) {
+          browserReplacePath('/login');
+        }
       }
       if (authenticated) await refreshRemoteData();
       _mqtt.statusStream.listen(_handleMqttStatus);
@@ -159,6 +241,9 @@ class NexusLedState extends ChangeNotifier {
     profile = null;
     events.clear();
     section = AppSection.dashboard;
+    if (kIsWeb) {
+      browserReplacePath('/login');
+    }
     notifyListeners();
   }
 
@@ -192,6 +277,9 @@ class NexusLedState extends ChangeNotifier {
 
   void setSection(AppSection next) {
     section = next;
+    if (kIsWeb) {
+      browserReplacePath(next.path);
+    }
     notifyListeners();
   }
 
@@ -376,6 +464,7 @@ class NexusLedState extends ChangeNotifier {
 
   @override
   void dispose() {
+    _authStateSubscription?.cancel();
     _mqtt.dispose();
     super.dispose();
   }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -9,6 +10,7 @@ import 'presentation/screens/auth/register_screen.dart';
 import 'presentation/screens/main_shell.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/state/nexus_led_state.dart';
+import 'core/utils/browser_path.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,13 +62,23 @@ class _NexusLedAppState extends State<NexusLedApp> {
           : _showRegister
           ? RegisterScreen(
               onRegister: _register,
-              onBackToLogin: () => setState(() => _showRegister = false),
+              onBackToLogin: () {
+                setState(() => _showRegister = false);
+                if (kIsWeb) {
+                  browserReplacePath('/login');
+                }
+              },
               loading: _state.loading,
               error: _state.lastError,
             )
           : LoginScreen(
               onLogin: _state.login,
-              onGoToRegister: () => setState(() => _showRegister = true),
+              onGoToRegister: () {
+                setState(() => _showRegister = true);
+                if (kIsWeb) {
+                  browserReplacePath('/register');
+                }
+              },
               onGoogleLogin: _state.loginWithGoogle,
               onGithubLogin: _state.loginWithGithub,
               loading: _state.loading,
