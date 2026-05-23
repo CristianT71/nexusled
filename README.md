@@ -1,11 +1,19 @@
 # NexusLED
 
-NexusLED es una aplicación Flutter para controlar y monitorear un LED desde cualquier lugar usando MQTT como canal de mensajería y Supabase como backend de autenticación, base de datos y sincronización.
+NexusLED es una aplicación Flutter para controlar y monitorear un LED RGB desde cualquier lugar usando MQTT como canal de mensajería.
 
 La aplicación está preparada para ejecutarse en Android, Windows, web y, en general, en cualquier plataforma soportada por Flutter. La versión web está publicada en Netlify y los binarios de Android y Windows se distribuyen desde GitHub Releases.
 
 Sitio web:
 https://nexusled.netlify.app/
+
+## Capturas de pantalla
+
+![Dashboard](assets/capturas/dashboard.png)
+
+![Control LED](assets/capturas/controlled.png)
+
+![Estadísticas](assets/capturas/estadisticas.png)
 
 ## Qué hace el proyecto
 
