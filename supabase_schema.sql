@@ -135,7 +135,7 @@ begin
   values (new.id)
   on conflict (user_id, device_id) do nothing;
 
-  -- Create default MQTT config for new user (bypass RLS)
+  -- Create or update default MQTT config for new user (bypass RLS)
   begin
     insert into public.mqtt_config (user_id, config_name, broker_host, broker_port, websocket_port, use_ssl, topic_control, topic_status, topic_color, topic_heartbeat, client_id, username, password, qos, retain, keep_alive, is_active)
     values (
@@ -157,9 +157,26 @@ begin
       60,
       true
     )
-    on conflict (user_id) do nothing;
+    on conflict (user_id) do update set
+      config_name = excluded.config_name,
+      broker_host = excluded.broker_host,
+      broker_port = excluded.broker_port,
+      websocket_port = excluded.websocket_port,
+      use_ssl = excluded.use_ssl,
+      topic_control = excluded.topic_control,
+      topic_status = excluded.topic_status,
+      topic_color = excluded.topic_color,
+      topic_heartbeat = excluded.topic_heartbeat,
+      client_id = excluded.client_id,
+      username = excluded.username,
+      password = excluded.password,
+      qos = excluded.qos,
+      retain = excluded.retain,
+      keep_alive = excluded.keep_alive,
+      is_active = excluded.is_active,
+      updated_at = now();
   exception when others then
-    -- Ignore errors if mqtt_config insert fails
+    -- Ignore errors if mqtt_config insert/update fails
     null;
   end;
 

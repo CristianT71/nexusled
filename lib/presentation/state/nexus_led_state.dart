@@ -73,11 +73,13 @@ class NexusLedState extends ChangeNotifier {
     lastError = null;
     notifyListeners();
     try {
-      await _localConfig.load(mqttConfig);
       await _supabase.initialize();
       authenticated = _supabase.authenticated;
       if (authenticated) {
         await _syncRemoteMqttConfig();
+        await _localConfig.save(mqttConfig);
+      } else {
+        await _localConfig.load(mqttConfig);
       }
       if (authenticated) await refreshRemoteData();
       _mqtt.statusStream.listen(_handleMqttStatus);
