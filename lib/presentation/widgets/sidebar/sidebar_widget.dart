@@ -10,6 +10,7 @@ class SidebarWidget extends StatelessWidget {
     required this.expanded,
     required this.connected,
     required this.userName,
+    required this.avatarUrl,
     required this.onSelect,
     required this.onLogout,
   });
@@ -18,6 +19,7 @@ class SidebarWidget extends StatelessWidget {
   final bool expanded;
   final bool connected;
   final String userName;
+  final String? avatarUrl;
   final ValueChanged<AppSection> onSelect;
   final VoidCallback onLogout;
 
@@ -44,6 +46,7 @@ class SidebarWidget extends StatelessWidget {
               expanded: expanded,
               connected: connected,
               userName: userName,
+              avatarUrl: avatarUrl,
             ),
             const Divider(color: Colors.white12, height: 28),
             Expanded(
@@ -151,11 +154,13 @@ class _UserMini extends StatelessWidget {
     required this.expanded,
     required this.connected,
     required this.userName,
+    required this.avatarUrl,
   });
 
   final bool expanded;
   final bool connected;
   final String userName;
+  final String? avatarUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -166,9 +171,14 @@ class _UserMini extends StatelessWidget {
             ? MainAxisAlignment.start
             : MainAxisAlignment.center,
         children: [
-          const CircleAvatar(
+          CircleAvatar(
             backgroundColor: AppColors.purpleAccent,
-            child: Icon(Icons.person_rounded),
+            backgroundImage: avatarUrl != null && avatarUrl.isNotEmpty
+                ? NetworkImage(avatarUrl)
+                : null,
+            child: avatarUrl != null && avatarUrl.isNotEmpty
+                ? null
+                : const Icon(Icons.person_rounded),
           ),
           if (expanded) const SizedBox(width: 10),
           if (expanded)

@@ -1,24 +1,100 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/profile_model.dart';
 import '../../widgets/common/glass_card.dart';
 import '../../widgets/common/nexus_button.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
     super.key,
     required this.profile,
     required this.onLogout,
+    required this.onUpdateProfile,
+    required this.onUploadAvatar,
   });
 
   final ProfileModel? profile;
   final VoidCallback onLogout;
+  final Future<void> Function(String fullName, String username, String phone) onUpdateProfile;
+  final Future<void> Function(String filePath) onUploadAvatar;
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool _isEditing = false;
+  bool _isLoading = false;
+  late TextEditingController _fullNameController;
+  late TextEditingController _usernameController;
+  late TextEditingController _phoneController;
+
+  @override
+  void initState() {
+    super.initState();
+    _fullNameController = TextEditingController(text: widget.profile?.fullName ?? '');
+    _usernameController = TextEditingController(text: widget.profile?.username ?? '');
+    _phoneController = TextEditingController(text: widget.profile?.phone ?? '');
+  }
+
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _usernameController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickAndUploadAvatar() async {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 512,
+      maxHeight: 512,
+      imageQuality: 85,
+    );
+    if (image != null) {
+      setState(() => _isLoading = true);
+      try {
+        await widget.onUploadAvatar(image.path);
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e')),
+          );
+        }
+      } finally {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _saveProfile() async {
+    setState(() => _isLoading = true);
+    try {
+      await widget.onUpdateProfile(
+        _fullNameController.text,
+        _usernameController.text,
+        _phoneController.text,
+      );
+      setState(() => _isEditing = false);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final displayName = profile?.fullName.isNotEmpty == true
-        ? profile!.fullName
+    final displayName = widget.profile?.fullName.isNotEmpty == true
+        ? widget.profile!.fullName
         : 'Usuario NexusLED';
     final initials = displayName
         .trim()
@@ -42,10 +118,10 @@ class ProfileScreen extends StatelessWidget {
                     CircleAvatar(
                       radius: 44,
                       backgroundColor: AppColors.purpleAccent,
-                      backgroundImage: profile?.avatarUrl.isNotEmpty == true
-                          ? NetworkImage(profile!.avatarUrl)
+                      backgroundImage: widget.profile?.avatarUrl.isNotEmpty == true
+                          ? NetworkImage(widget.profile!.avatarUrl)
                           : null,
-                      child: profile?.avatarUrl.isNotEmpty == true
+                      child: widget.profile?.avatarUrl.isNotEmpty == true
                           ? null
                           : Text(
                               initials.isEmpty ? 'N' : initials,
@@ -58,15 +134,23 @@ class ProfileScreen extends StatelessWidget {
                     Positioned(
                       right: 0,
                       bottom: 0,
-                      child: Container(
-                        width: 24,
-                        height: 24,
-                        decoration: BoxDecoration(
-                          color: AppColors.ledOn,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: AppColors.bgSecondary,
-                            width: 2,
+                      child: GestureDetector(
+                        onTap: _pickAndUploadAvatar,
+                        child: Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: AppColors.ledOn,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: AppColors.bgSecondary,
+                              width: 2,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.camera_alt_rounded,
+                            size: 16,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -87,7 +171,7 @@ class ProfileScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        profile?.email ?? '',
+                        widget.profile?.email ?? '',
                         style: const TextStyle(color: AppColors.textSecondary),
                       ),
                       const SizedBox(height: 12),
@@ -97,23 +181,83 @@ class ProfileScreen extends StatelessWidget {
                         children: [
                           _ProfileChip(
                             label:
-                                profile?.authProvider.toUpperCase() ?? 'EMAIL',
+                                widget.profile?.authProvider.toUpperCase() ?? 'EMAIL',
                             icon: Icons.verified_user_rounded,
                           ),
                           _ProfileChip(
-                            label: profile?.username.isNotEmpty == true
-                                ? '@${profile!.username}'
+                            label: widget.profile?.username.isNotEmpty == true
+                                ? '@${widget.profile!.username}'
                                 : 'Sin username',
                             icon: Icons.alternate_email_rounded,
                           ),
                           _ProfileChip(
-                            label: profile?.phone.isNotEmpty == true
-                                ? profile!.phone
+                            label: widget.profile?.phone.isNotEmpty == true
+                                ? widget.profile!.phone
                                 : 'Sin teléfono',
                             icon: Icons.phone_rounded,
                           ),
                         ],
                       ),
+                      const SizedBox(height: 12),
+                      if (!_isEditing)
+                        NexusButton(
+                          label: 'EDITAR PERFIL',
+                          onPressed: () => setState(() => _isEditing = true),
+                          icon: Icons.edit_rounded,
+                        ),
+                      if (_isEditing) ...[
+                        TextField(
+                          controller: _fullNameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Nombre completo',
+                            prefixIcon: Icon(Icons.badge_rounded),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: _usernameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Usuario',
+                            prefixIcon: Icon(Icons.alternate_email_rounded),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller: _phoneController,
+                          decoration: const InputDecoration(
+                            labelText: 'Teléfono',
+                            prefixIcon: Icon(Icons.phone_rounded),
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: NexusButton(
+                                label: 'GUARDAR',
+                                onPressed: _isLoading ? null : _saveProfile,
+                                icon: Icons.save_rounded,
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: NexusButton(
+                                label: 'CANCELAR',
+                                onPressed: () {
+                                  setState(() {
+                                    _isEditing = false;
+                                    _fullNameController.text = widget.profile?.fullName ?? '';
+                                    _usernameController.text = widget.profile?.username ?? '';
+                                    _phoneController.text = widget.profile?.phone ?? '';
+                                  });
+                                },
+                                icon: Icons.cancel_rounded,
+                                colors: const [Color(0xFF666666), Color(0xFF444444)],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
                 ),
@@ -151,8 +295,8 @@ class ProfileScreen extends StatelessWidget {
                           width: cardWidth,
                           child: _ProfileInfoCard(
                             title: 'Usuario',
-                            value: profile?.username.isNotEmpty == true
-                                ? '@${profile!.username}'
+                            value: widget.profile?.username.isNotEmpty == true
+                                ? '@${widget.profile!.username}'
                                 : 'Sin username',
                             icon: Icons.alternate_email_rounded,
                           ),
@@ -161,8 +305,8 @@ class ProfileScreen extends StatelessWidget {
                           width: cardWidth,
                           child: _ProfileInfoCard(
                             title: 'Teléfono',
-                            value: profile?.phone.isNotEmpty == true
-                                ? profile!.phone
+                            value: widget.profile?.phone.isNotEmpty == true
+                                ? widget.profile!.phone
                                 : 'Sin número guardado',
                             icon: Icons.phone_rounded,
                           ),
@@ -172,7 +316,7 @@ class ProfileScreen extends StatelessWidget {
                           child: _ProfileInfoCard(
                             title: 'Método de acceso',
                             value:
-                                profile?.authProvider.toUpperCase() ?? 'EMAIL',
+                                widget.profile?.authProvider.toUpperCase() ?? 'EMAIL',
                             icon: Icons.lock_rounded,
                           ),
                         ),
@@ -192,7 +336,7 @@ class ProfileScreen extends StatelessWidget {
                   children: [
                     NexusButton(
                       label: 'CERRAR SESIÓN',
-                      onPressed: onLogout,
+                      onPressed: widget.onLogout,
                       icon: Icons.logout_rounded,
                       colors: const [Color(0xFF991B1B), AppColors.ledOff],
                     ),

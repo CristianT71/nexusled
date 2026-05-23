@@ -153,6 +153,31 @@ class NexusLedState extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> updateProfile({
+    required String fullName,
+    required String username,
+    required String phone,
+  }) async {
+    await _run(() async {
+      await _supabase.updateProfile(
+        fullName: fullName,
+        username: username,
+        phone: phone,
+      );
+      await refreshRemoteData();
+    });
+  }
+
+  Future<void> uploadAvatar(String filePath) async {
+    await _run(() async {
+      final avatarUrl = await _supabase.uploadAvatar(filePath);
+      if (avatarUrl != null) {
+        await _supabase.updateAvatarUrl(avatarUrl);
+        await refreshRemoteData();
+      }
+    });
+  }
+
   void setSection(AppSection next) {
     section = next;
     notifyListeners();

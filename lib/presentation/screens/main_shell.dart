@@ -37,6 +37,7 @@ class MainShell extends StatelessWidget {
                   connected: state.mqttConnected,
                   userName:
                       state.profile?.fullName ?? state.profile?.email ?? '',
+                  avatarUrl: state.profile?.avatarUrl,
                   onSelect: (section) {
                     Navigator.pop(context);
                     state.setSection(section);
@@ -56,6 +57,7 @@ class MainShell extends StatelessWidget {
                   connected: state.mqttConnected,
                   userName:
                       state.profile?.fullName ?? state.profile?.email ?? '',
+                  avatarUrl: state.profile?.avatarUrl,
                   onSelect: state.setSection,
                   onLogout: state.logout,
                 ),
@@ -145,6 +147,8 @@ class _CurrentScreen extends StatelessWidget {
       AppSection.profile => ProfileScreen(
         profile: state.profile,
         onLogout: state.logout,
+        onUpdateProfile: state.updateProfile,
+        onUploadAvatar: state.uploadAvatar,
       ),
     };
   }

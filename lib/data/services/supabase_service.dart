@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -102,6 +104,50 @@ class SupabaseService {
         .maybeSingle();
     if (data == null) return null;
     return ProfileModel.fromMap(data, email: user.email ?? '');
+  }
+
+  Future<void> updateProfile({
+    required String fullName,
+    required String username,
+    required String phone,
+  }) async {
+    final supabase = client;
+    final user = currentUser;
+    if (supabase == null || user == null) return;
+    await supabase.from('profiles').update({
+      'full_name': fullName,
+      'username': username,
+      'phone': phone,
+      'updated_at': DateTime.now().toIso8601String(),
+    }).eq('id', user.id);
+  }
+
+  Future<String?> uploadAvatar(String filePath) async {
+    final supabase = client;
+    final user = currentUser;
+    if (supabase == null || user == null) return null;
+
+    final file = File(filePath);
+    final fileExt = filePath.split('.').last;
+    final fileName = '${user.id}/avatar.$fileExt';
+
+    await supabase.storage.from('avatars').upload(
+      fileName,
+      file,
+    );
+
+    final publicUrl = supabase.storage.from('avatars').getPublicUrl(fileName);
+    return publicUrl;
+  }
+
+  Future<void> updateAvatarUrl(String avatarUrl) async {
+    final supabase = client;
+    final user = currentUser;
+    if (supabase == null || user == null) return;
+    await supabase.from('profiles').update({
+      'avatar_url': avatarUrl,
+      'updated_at': DateTime.now().toIso8601String(),
+    }).eq('id', user.id);
   }
 
   Future<List<LedEventModel>> fetchLedEvents({int limit = 100}) async {
