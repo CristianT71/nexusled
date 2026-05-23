@@ -10,6 +10,9 @@ class TopBar extends StatelessWidget {
     required this.onMenu,
     required this.onProfile,
     required this.onToggleSidebar,
+    required this.onSearch,
+    required this.onNotifications,
+    this.notificationCount = 0,
   });
 
   final String title;
@@ -17,6 +20,9 @@ class TopBar extends StatelessWidget {
   final VoidCallback onMenu;
   final VoidCallback onProfile;
   final VoidCallback onToggleSidebar;
+  final VoidCallback onSearch;
+  final VoidCallback onNotifications;
+  final int notificationCount;
 
   @override
   Widget build(BuildContext context) {
@@ -47,25 +53,33 @@ class TopBar extends StatelessWidget {
               style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
             ),
           ),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search_rounded)),
+          IconButton(onPressed: onSearch, icon: const Icon(Icons.search_rounded)),
           Stack(
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: onNotifications,
                 icon: const Icon(Icons.notifications_rounded),
               ),
-              Positioned(
-                right: 9,
-                top: 9,
-                child: Container(
-                  width: 9,
-                  height: 9,
-                  decoration: const BoxDecoration(
-                    color: AppColors.magenta,
-                    shape: BoxShape.circle,
+              if (notificationCount > 0)
+                Positioned(
+                  right: 9,
+                  top: 9,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: AppColors.magenta,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      notificationCount > 9 ? '9+' : '$notificationCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
           IconButton(

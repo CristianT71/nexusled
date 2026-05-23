@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/constants/app_colors.dart';
 import '../../core/utils/responsive_helper.dart';
 import '../state/nexus_led_state.dart';
 import '../widgets/common/animated_background.dart';
@@ -72,6 +73,9 @@ class MainShell extends StatelessWidget {
                           onMenu: () => Scaffold.of(context).openDrawer(),
                           onProfile: () => state.setSection(AppSection.profile),
                           onToggleSidebar: state.toggleSidebar,
+                          onSearch: () => _showSearchDialog(context, state),
+                          onNotifications: () => _showNotificationsDialog(context, state),
+                          notificationCount: state.events.length,
                         );
                       },
                     ),
@@ -85,6 +89,71 @@ class MainShell extends StatelessWidget {
       ),
     );
   }
+}
+
+void _showSearchDialog(BuildContext context, NexusLedState state) {
+  final controller = TextEditingController();
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Buscar eventos'),
+      content: TextField(
+        controller: controller,
+        decoration: const InputDecoration(
+          hintText: 'Buscar por acción, estado...',
+          prefixIcon: Icon(Icons.search_rounded),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancelar'),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+            // TODO: Implement search functionality
+          },
+          child: const Text('Buscar'),
+        ),
+      ],
+    ),
+  );
+}
+
+void _showNotificationsDialog(BuildContext context, NexusLedState state) {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Notificaciones'),
+      content: state.events.isEmpty
+          ? const Text('No hay eventos recientes')
+          : SizedBox(
+              width: double.maxFinite,
+              height: 300,
+              child: ListView.builder(
+                itemCount: state.events.length,
+                itemBuilder: (context, index) {
+                  final event = state.events[index];
+                  return ListTile(
+                    leading: Icon(
+                      event.action == 'ON' ? Icons.lightbulb_rounded : Icons.lightbulb_outline_rounded,
+                      color: event.action == 'ON' ? AppColors.ledOn : AppColors.ledOff,
+                    ),
+                    title: Text('${event.action} - ${event.newState}'),
+                    subtitle: Text('${event.createdAt} • ${event.latencyMs}ms'),
+                  );
+                },
+              ),
+            ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cerrar'),
+        ),
+      ],
+    ),
+  );
 }
 
 class _CurrentScreen extends StatelessWidget {
