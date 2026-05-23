@@ -157,7 +157,7 @@ class SupabaseService {
     print('Tamaño del archivo: ${file.lengthSync()} bytes');
 
     try {
-      final response = await supabase.storage.from('avatars').upload(
+      await supabase.storage.from('avatars').upload(
         fileName,
         file,
         fileOptions: const FileOptions(
@@ -165,11 +165,6 @@ class SupabaseService {
           upsert: true,
         ),
       );
-
-      if (response.error != null) {
-        throw Exception('Error de Supabase Storage: ${response.error!.message}');
-      }
-
       print('Avatar subido exitosamente');
     } catch (e) {
       print('Error al subir avatar: $e');
