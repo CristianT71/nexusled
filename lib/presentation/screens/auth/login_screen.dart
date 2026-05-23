@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../widgets/common/animated_background.dart';
@@ -111,7 +111,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     IconButton(
                       onPressed: widget.loading ? null : widget.onGoogleLogin,
-                      icon: const FaIcon(FontAwesomeIcons.google, size: 32),
+                      icon: SvgPicture.network(
+                        'https://www.vectorlogo.zone/logos/google/google-icon.svg',
+                        width: 32,
+                        height: 32,
+                      ),
                       tooltip: 'Google',
                       style: IconButton.styleFrom(
                         backgroundColor: AppColors.bgSecondary.withValues(alpha: 0.5),
@@ -121,7 +125,15 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(width: 16),
                     IconButton(
                       onPressed: widget.loading ? null : widget.onGithubLogin,
-                      icon: const FaIcon(FontAwesomeIcons.github, size: 32),
+                      icon: SvgPicture.network(
+                        'https://www.vectorlogo.zone/logos/github/github-icon.svg',
+                        width: 32,
+                        height: 32,
+                        colorFilter: const ColorFilter.mode(
+                          AppColors.textPrimary,
+                          BlendMode.srcIn,
+                        ),
+                      ),
                       tooltip: 'GitHub',
                       style: IconButton.styleFrom(
                         backgroundColor: AppColors.bgSecondary.withValues(alpha: 0.5),
