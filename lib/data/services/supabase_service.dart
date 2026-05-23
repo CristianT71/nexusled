@@ -20,8 +20,15 @@ class SupabaseService {
   Future<void> initialize() async {
     if (_initialized) return;
     
-    final url = dotenv.env['SUPABASE_URL']?.trim();
-    final anonKey = dotenv.env['SUPABASE_ANON_KEY']?.trim();
+    // Try environment variables (for web/Netlify)
+    String? url = const String.fromEnvironment('SUPABASE_URL');
+    String? anonKey = const String.fromEnvironment('SUPABASE_ANON_KEY');
+    
+    // Fallback to dotenv (for APK/desktop with .env file)
+    if (url.isEmpty || anonKey.isEmpty) {
+      url = dotenv.env['SUPABASE_URL']?.trim();
+      anonKey = dotenv.env['SUPABASE_ANON_KEY']?.trim();
+    }
     
     if (url == null || url.isEmpty || anonKey == null || anonKey.isEmpty) {
       _initialized = false;

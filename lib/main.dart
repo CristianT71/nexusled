@@ -12,7 +12,7 @@ import 'presentation/state/nexus_led_state.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env');
+  await dotenv.load(fileName: '.env', isOptional: true);
   runApp(const NexusLedApp());
 }
 
