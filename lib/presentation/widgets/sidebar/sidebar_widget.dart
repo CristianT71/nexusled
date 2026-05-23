@@ -173,10 +173,10 @@ class _UserMini extends StatelessWidget {
         children: [
           CircleAvatar(
             backgroundColor: AppColors.purpleAccent,
-            backgroundImage: avatarUrl != null && avatarUrl.isNotEmpty
-                ? NetworkImage(avatarUrl)
+            backgroundImage: avatarUrl != null && avatarUrl!.isNotEmpty
+                ? NetworkImage(avatarUrl!)
                 : null,
-            child: avatarUrl != null && avatarUrl.isNotEmpty
+            child: avatarUrl != null && avatarUrl!.isNotEmpty
                 ? null
                 : const Icon(Icons.person_rounded),
           ),

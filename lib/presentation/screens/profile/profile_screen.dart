@@ -17,7 +17,7 @@ class ProfileScreen extends StatefulWidget {
 
   final ProfileModel? profile;
   final VoidCallback onLogout;
-  final Future<void> Function(String fullName, String username, String phone) onUpdateProfile;
+  final Future<void> Function({required String fullName, required String username, required String phone}) onUpdateProfile;
   final Future<void> Function(String filePath) onUploadAvatar;
 
   @override
