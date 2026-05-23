@@ -59,10 +59,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       setState(() => _isLoading = true);
       try {
         await widget.onUploadAvatar(image.path);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Avatar actualizado correctamente'),
+              backgroundColor: AppColors.ledOn,
+            ),
+          );
+        }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e')),
+            SnackBar(
+              content: Text('Error al subir avatar: $e'),
+              backgroundColor: AppColors.ledOff,
+            ),
           );
         }
       } finally {

@@ -147,10 +147,18 @@ class SupabaseService {
     final fileExt = filePath.split('.').last;
     final fileName = '${user.id}/avatar.$fileExt';
 
-    await supabase.storage.from('avatars').upload(
-      fileName,
-      file,
-    );
+    try {
+      await supabase.storage.from('avatars').upload(
+        fileName,
+        file,
+        fileOptions: const FileOptions(
+          cacheControl: '3600',
+          upsert: true,
+        ),
+      );
+    } catch (e) {
+      throw Exception('Error al subir avatar: $e');
+    }
 
     final publicUrl = supabase.storage.from('avatars').getPublicUrl(fileName);
     return publicUrl;
