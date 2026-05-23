@@ -1,3 +1,4 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/led_event_model.dart';
@@ -16,15 +17,20 @@ class SupabaseService {
   bool get authenticated => currentUser != null;
   Stream<AuthState>? get authStateChanges => client?.auth.onAuthStateChange;
 
-  Future<void> initialize(SupabaseConfigModel config) async {
-    if (!config.enabled || !config.isValid) {
+  Future<void> initialize() async {
+    if (_initialized) return;
+    
+    final url = dotenv.env['SUPABASE_URL']?.trim();
+    final anonKey = dotenv.env['SUPABASE_ANON_KEY']?.trim();
+    
+    if (url == null || url.isEmpty || anonKey == null || anonKey.isEmpty) {
       _initialized = false;
       return;
     }
-    if (_initialized) return;
+    
     await Supabase.initialize(
-      url: config.projectUrl.trim(),
-      anonKey: config.anonKey.trim(),
+      url: url,
+      anonKey: anonKey,
     );
     _initialized = true;
   }
