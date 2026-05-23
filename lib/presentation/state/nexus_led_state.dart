@@ -244,6 +244,8 @@ class NexusLedState extends ChangeNotifier {
       ..useSsl = remote.useSsl
       ..topicControl = remote.topicControl
       ..topicStatus = remote.topicStatus
+      ..topicColor = remote.topicColor
+      ..topicHeartbeat = remote.topicHeartbeat
       ..qos = remote.qos
       ..retain = remote.retain
       ..keepAlive = remote.keepAlive

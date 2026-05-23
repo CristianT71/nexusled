@@ -175,6 +175,8 @@ class SupabaseService {
       'use_ssl': config.useSsl,
       'topic_control': config.topicControl,
       'topic_status': config.topicStatus,
+      'topic_color': config.topicColor,
+      'topic_heartbeat': config.topicHeartbeat,
       'client_id': config.clientId,
       'username': config.username,
       'password': config.password,
@@ -233,6 +235,8 @@ class SupabaseService {
       useSsl: row['use_ssl'] == true,
       topicControl: '${row['topic_control'] ?? ''}',
       topicStatus: '${row['topic_status'] ?? ''}',
+      topicColor: '${row['topic_color'] ?? 'nexusled/led/color'}',
+      topicHeartbeat: '${row['topic_heartbeat'] ?? 'nexusled/heartbeat'}',
       qos: row['qos'] is int ? row['qos'] as int : 1,
       retain: row['retain'] == true,
       keepAlive: row['keep_alive'] is int

@@ -23,7 +23,7 @@ create table if not exists public.mqtt_config (
   use_ssl boolean not null default true,
   topic_control text not null default 'nexusled/led/control',
   topic_status text not null default 'nexusled/led/status',
-  topic_events text not null default 'nexusled/events',
+  topic_color text not null default 'nexusled/led/color',
   topic_heartbeat text not null default 'nexusled/heartbeat',
   client_id text not null default '',
   username text not null default '',
@@ -134,6 +134,29 @@ begin
   insert into public.device_status (user_id)
   values (new.id)
   on conflict (user_id, device_id) do nothing;
+
+  -- Create default MQTT config for new user
+  insert into public.mqtt_config (user_id, config_name, broker_host, broker_port, websocket_port, use_ssl, topic_control, topic_status, topic_color, topic_heartbeat, client_id, username, password, qos, retain, keep_alive, is_active)
+  values (
+    new.id,
+    'Default EMQX Cloud',
+    'broker.emqx.io',
+    1883,
+    8083,
+    false,
+    'nexusled/led/control',
+    'nexusled/led/status',
+    'nexusled/led/color',
+    'nexusled/heartbeat',
+    '',
+    '',
+    '',
+    1,
+    false,
+    60,
+    true
+  )
+  on conflict (user_id) do nothing;
 
   return new;
 end;
