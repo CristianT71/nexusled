@@ -140,10 +140,10 @@ begin
     insert into public.mqtt_config (user_id, config_name, broker_host, broker_port, websocket_port, use_ssl, topic_control, topic_status, topic_color, topic_heartbeat, client_id, username, password, qos, retain, keep_alive, is_active)
     values (
       new.id,
-      'Default EMQX Cloud',
-      'broker.emqx.io',
+      'HiveMQ Public Broker',
+      'broker.hivemq.com',
       1883,
-      8083,
+      8000,
       false,
       'nexusled/led/control',
       'nexusled/led/status',
