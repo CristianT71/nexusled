@@ -202,27 +202,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     if (_isEditing)
                       Positioned(
-                        right: -2,
-                        bottom: -2,
+                        right: 2,
+                        bottom: 2,
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: _pickAvatar,
-                            borderRadius: BorderRadius.circular(20),
+                            customBorder: const CircleBorder(),
                             child: Container(
-                              width: 36,
-                              height: 36,
+                              width: 26,
+                              height: 26,
                               decoration: BoxDecoration(
-                                color: AppColors.ledOn,
+                                color: Colors.black.withValues(alpha: 0.55),
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color: AppColors.bgSecondary,
-                                  width: 2,
+                                  width: 1.5,
                                 ),
                               ),
                               child: const Icon(
-                                Icons.add_a_photo_outlined,
-                                size: 18,
+                                Icons.camera_alt_rounded,
+                                size: 14,
                                 color: Colors.white,
                               ),
                             ),
