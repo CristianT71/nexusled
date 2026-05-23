@@ -141,14 +141,23 @@ class SupabaseService {
   Future<String?> uploadAvatar(String filePath) async {
     final supabase = client;
     final user = currentUser;
-    if (supabase == null || user == null) return null;
+    if (supabase == null || user == null) {
+      throw Exception('Usuario no autenticado o Supabase no configurado');
+    }
 
     final file = File(filePath);
+    if (!file.existsSync()) {
+      throw Exception('El archivo no existe: $filePath');
+    }
+
     final fileExt = filePath.split('.').last;
     final fileName = '${user.id}/avatar.$fileExt';
 
+    print('Subiendo avatar: $fileName');
+    print('Tamaño del archivo: ${file.lengthSync()} bytes');
+
     try {
-      await supabase.storage.from('avatars').upload(
+      final response = await supabase.storage.from('avatars').upload(
         fileName,
         file,
         fileOptions: const FileOptions(
@@ -156,11 +165,19 @@ class SupabaseService {
           upsert: true,
         ),
       );
+
+      if (response.error != null) {
+        throw Exception('Error de Supabase Storage: ${response.error!.message}');
+      }
+
+      print('Avatar subido exitosamente');
     } catch (e) {
+      print('Error al subir avatar: $e');
       throw Exception('Error al subir avatar: $e');
     }
 
     final publicUrl = supabase.storage.from('avatars').getPublicUrl(fileName);
+    print('URL pública: $publicUrl');
     return publicUrl;
   }
 
