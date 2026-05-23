@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../widgets/common/animated_background.dart';
@@ -110,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     IconButton(
                       onPressed: widget.loading ? null : widget.onGoogleLogin,
-                      icon: const Icon(Icons.g_mobiledata_rounded, size: 32),
+                      icon: const FaIcon(FontAwesomeIcons.google, size: 32),
                       tooltip: 'Google',
                       style: IconButton.styleFrom(
                         backgroundColor: AppColors.bgSecondary.withValues(alpha: 0.5),
@@ -120,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(width: 16),
                     IconButton(
                       onPressed: widget.loading ? null : widget.onGithubLogin,
-                      icon: const Icon(Icons.code_rounded, size: 32),
+                      icon: const FaIcon(FontAwesomeIcons.github, size: 32),
                       tooltip: 'GitHub',
                       style: IconButton.styleFrom(
                         backgroundColor: AppColors.bgSecondary.withValues(alpha: 0.5),
