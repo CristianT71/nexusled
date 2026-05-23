@@ -131,11 +131,13 @@ class _CurrentScreen extends StatelessWidget {
       ),
       AppSection.connections => SettingsScreen(
         config: state.mqttConfig,
+        supabaseConfig: state.supabaseConfig,
         onSave: state.saveConfiguration,
         onTest: state.testConnection,
       ),
       AppSection.settings => SettingsScreen(
         config: state.mqttConfig,
+        supabaseConfig: state.supabaseConfig,
         onSave: state.saveConfiguration,
         onTest: state.testConnection,
       ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../data/models/mqtt_config_model.dart';
+import '../../../data/models/supabase_config_model.dart';
 import '../../widgets/common/glass_card.dart';
 import '../../widgets/common/nexus_button.dart';
 import '../../widgets/mqtt_connection_test_dialog.dart';
@@ -10,11 +11,13 @@ class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
     super.key,
     required this.config,
+    required this.supabaseConfig,
     required this.onSave,
     required this.onTest,
   });
 
   final MqttConfigModel config;
+  final SupabaseConfigModel supabaseConfig;
   final Future<void> Function() onSave;
   final Future<Map<String, dynamic>> Function() onTest;
 
@@ -35,6 +38,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   late final TextEditingController _keepAlive;
   late final TextEditingController _mqttUsername;
   late final TextEditingController _mqttPassword;
+  late final TextEditingController _supabaseUrl;
+  late final TextEditingController _supabaseAnonKey;
 
   @override
   void initState() {
@@ -52,6 +57,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _keepAlive = TextEditingController(text: '${config.keepAlive}');
     _mqttUsername = TextEditingController(text: config.username);
     _mqttPassword = TextEditingController(text: config.password);
+    _supabaseUrl = TextEditingController(
+      text: widget.supabaseConfig.projectUrl,
+    );
+    _supabaseAnonKey = TextEditingController(
+      text: widget.supabaseConfig.anonKey,
+    );
   }
 
   @override
@@ -68,6 +79,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     _keepAlive.dispose();
     _mqttUsername.dispose();
     _mqttPassword.dispose();
+    _supabaseUrl.dispose();
+    _supabaseAnonKey.dispose();
     super.dispose();
   }
 
@@ -85,6 +98,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
     config.keepAlive = int.tryParse(_keepAlive.text) ?? config.keepAlive;
     config.username = _mqttUsername.text;
     config.password = _mqttPassword.text;
+    widget.supabaseConfig.projectUrl = _supabaseUrl.text;
+    widget.supabaseConfig.anonKey = _supabaseAnonKey.text;
     await widget.onSave();
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -106,7 +121,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
             const SizedBox(height: 8),
             const Text(
-              'Configuración del broker MQTT y tópicos.',
+              'Configuración del broker MQTT.',
               style: TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 20),
@@ -193,6 +208,28 @@ class _SettingsScreenState extends State<SettingsScreen> {
               title: const Text('Retained Messages'),
               onChanged: (value) =>
                   setState(() => widget.config.retain = value),
+            ),
+            const Divider(color: Colors.white12, height: 34),
+            const Text(
+              'Configuración Avanzada (Supabase)',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w900, color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Solo necesario si no hay variables de entorno configuradas.',
+              style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+            ),
+            const SizedBox(height: 12),
+            _Field(
+              controller: _supabaseUrl,
+              label: 'Supabase Project URL',
+              icon: Icons.link_rounded,
+            ),
+            _Field(
+              controller: _supabaseAnonKey,
+              label: 'Supabase Anon Key',
+              icon: Icons.vpn_key_rounded,
+              obscure: true,
             ),
             const SizedBox(height: 12),
             Wrap(

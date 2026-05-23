@@ -4,6 +4,7 @@ import '../../data/models/led_event_model.dart';
 import '../../data/models/mqtt_config_model.dart';
 import '../../data/models/profile_model.dart';
 import '../../data/models/register_data_model.dart';
+import '../../data/models/supabase_config_model.dart';
 import '../../data/models/support_ticket_model.dart';
 import '../../data/services/camera_service.dart';
 import '../../data/services/local_config_service.dart';
@@ -61,6 +62,7 @@ class NexusLedState extends ChangeNotifier {
   String ledColor = "white";
   ProfileModel? profile;
   final mqttConfig = MqttConfigModel();
+  final supabaseConfig = SupabaseConfigModel();
   final _localConfig = LocalConfigService();
   final _mqtt = MqttService();
   final _supabase = SupabaseService();
@@ -73,8 +75,8 @@ class NexusLedState extends ChangeNotifier {
     lastError = null;
     notifyListeners();
     try {
-      await _localConfig.load(mqttConfig);
-      await _supabase.initialize();
+      await _localConfig.load(mqttConfig, supabaseConfig);
+      await _supabase.initialize(supabaseConfig);
       authenticated = _supabase.authenticated;
       if (authenticated) {
         await _syncRemoteMqttConfig();
@@ -98,7 +100,7 @@ class NexusLedState extends ChangeNotifier {
 
   Future<void> login(String email, String password) async {
     await _run(() async {
-      await _supabase.initialize();
+      await _supabase.initialize(supabaseConfig);
       await _supabase.signIn(email, password);
       authenticated = _supabase.authenticated;
       if (!authenticated) throw StateError('No se pudo iniciar sesión.');
@@ -108,7 +110,7 @@ class NexusLedState extends ChangeNotifier {
 
   Future<void> loginWithGoogle() async {
     await _run(() async {
-      await _supabase.initialize();
+      await _supabase.initialize(supabaseConfig);
       await _supabase.signInWithGoogle();
       authenticated = _supabase.authenticated;
       if (authenticated) await refreshRemoteData();
@@ -117,7 +119,7 @@ class NexusLedState extends ChangeNotifier {
 
   Future<void> register(RegisterDataModel data) async {
     await _run(() async {
-      await _supabase.initialize();
+      await _supabase.initialize(supabaseConfig);
       await _supabase.signUp(data);
       authenticated = _supabase.authenticated;
       if (!authenticated) {
@@ -226,8 +228,8 @@ class NexusLedState extends ChangeNotifier {
 
   Future<void> saveConfiguration() async {
     await _run(() async {
-      await _localConfig.save(mqttConfig);
-      await _supabase.initialize();
+      await _localConfig.save(mqttConfig, supabaseConfig);
+      await _supabase.initialize(supabaseConfig);
       await _supabase.saveMqttConfig(mqttConfig);
     });
   }
@@ -251,7 +253,7 @@ class NexusLedState extends ChangeNotifier {
       ..username = remote.username
       ..password = remote.password;
 
-    await _localConfig.save(mqttConfig);
+    await _localConfig.save(mqttConfig, supabaseConfig);
   }
 
   Future<Map<String, dynamic>> testConnection() async {

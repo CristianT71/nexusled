@@ -1,9 +1,10 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/mqtt_config_model.dart';
+import '../models/supabase_config_model.dart';
 
 class LocalConfigService {
-  Future<void> load(MqttConfigModel mqtt) async {
+  Future<void> load(MqttConfigModel mqtt, SupabaseConfigModel supabase) async {
     final prefs = await SharedPreferences.getInstance();
     mqtt.configName = prefs.getString('mqtt.configName') ?? mqtt.configName;
     mqtt.brokerHost = prefs.getString('mqtt.brokerHost') ?? mqtt.brokerHost;
@@ -22,9 +23,12 @@ class LocalConfigService {
     mqtt.clientId = prefs.getString('mqtt.clientId') ?? mqtt.clientId;
     mqtt.username = prefs.getString('mqtt.username') ?? mqtt.username;
     mqtt.password = prefs.getString('mqtt.password') ?? mqtt.password;
+    supabase.projectUrl = prefs.getString('supabase.projectUrl') ?? supabase.projectUrl;
+    supabase.anonKey = prefs.getString('supabase.anonKey') ?? supabase.anonKey;
+    supabase.enabled = prefs.getBool('supabase.enabled') ?? supabase.enabled;
   }
 
-  Future<void> save(MqttConfigModel mqtt) async {
+  Future<void> save(MqttConfigModel mqtt, SupabaseConfigModel supabase) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('mqtt.configName', mqtt.configName);
     await prefs.setString('mqtt.brokerHost', mqtt.brokerHost);
@@ -41,5 +45,8 @@ class LocalConfigService {
     await prefs.setString('mqtt.clientId', mqtt.clientId);
     await prefs.setString('mqtt.username', mqtt.username);
     await prefs.setString('mqtt.password', mqtt.password);
+    await prefs.setString('supabase.projectUrl', supabase.projectUrl);
+    await prefs.setString('supabase.anonKey', supabase.anonKey);
+    await prefs.setBool('supabase.enabled', supabase.enabled);
   }
 }

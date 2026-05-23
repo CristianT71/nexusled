@@ -17,11 +17,17 @@ class SupabaseService {
   bool get authenticated => currentUser != null;
   Stream<AuthState>? get authStateChanges => client?.auth.onAuthStateChange;
 
-  Future<void> initialize() async {
+  Future<void> initialize([SupabaseConfigModel? config]) async {
     if (_initialized) return;
     
-    final url = dotenv.env['SUPABASE_URL']?.trim();
-    final anonKey = dotenv.env['SUPABASE_ANON_KEY']?.trim();
+    String? url = dotenv.env['SUPABASE_URL']?.trim();
+    String? anonKey = dotenv.env['SUPABASE_ANON_KEY']?.trim();
+    
+    // Fallback to config if environment variables are not set
+    if ((url == null || url.isEmpty || anonKey == null || anonKey.isEmpty) && config != null) {
+      url = config.projectUrl.trim();
+      anonKey = config.anonKey.trim();
+    }
     
     if (url == null || url.isEmpty || anonKey == null || anonKey.isEmpty) {
       _initialized = false;
