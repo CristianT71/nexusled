@@ -51,6 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _pickAvatar() async {
+    print('_pickAvatar: Iniciando selección de imagen');
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(
       source: ImageSource.gallery,
@@ -59,21 +60,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
       imageQuality: 85,
     );
     if (image != null) {
+      print('_pickAvatar: Imagen seleccionada: ${image.path}');
       setState(() => _selectedAvatarPath = image.path);
+      print('_pickAvatar: _selectedAvatarPath actualizado: $_selectedAvatarPath');
+    } else {
+      print('_pickAvatar: No se seleccionó ninguna imagen');
     }
   }
 
   Future<void> _saveProfile() async {
+    print('_saveProfile: Iniciando guardado');
+    print('_saveProfile: _selectedAvatarPath = $_selectedAvatarPath');
     setState(() => _isLoading = true);
     try {
       if (_selectedAvatarPath != null) {
+        print('_saveProfile: Subiendo avatar: $_selectedAvatarPath');
         await widget.onUploadAvatar(_selectedAvatarPath!);
+        print('_saveProfile: Avatar subido exitosamente');
+      } else {
+        print('_saveProfile: No hay avatar seleccionado para subir');
       }
+      print('_saveProfile: Actualizando perfil');
       await widget.onUpdateProfile(
         fullName: _fullNameController.text,
         username: _usernameController.text,
         phone: _phoneController.text,
       );
+      print('_saveProfile: Perfil actualizado exitosamente');
       setState(() {
         _isEditing = false;
         _selectedAvatarPath = null;
@@ -87,6 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       }
     } catch (e) {
+      print('_saveProfile: Error al guardar: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -124,46 +138,84 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Stack(
                   children: [
-                    CircleAvatar(
-                      radius: 44,
-                      backgroundColor: AppColors.purpleAccent,
-                      backgroundImage: _selectedAvatarPath != null
-                          ? FileImage(File(_selectedAvatarPath!))
-                          : (widget.profile?.avatarUrl.isNotEmpty == true
-                              ? NetworkImage(widget.profile!.avatarUrl)
-                              : null),
-                      child: _selectedAvatarPath == null &&
-                              (widget.profile?.avatarUrl.isEmpty ?? true)
-                          ? Text(
-                              initials.isEmpty ? 'N' : initials,
-                              style: const TextStyle(
-                                fontSize: 28,
-                                fontWeight: FontWeight.w900,
-                              ),
+                    ClipOval(
+                      child: _selectedAvatarPath != null
+                          ? Image.file(
+                              File(_selectedAvatarPath!),
+                              width: 88,
+                              height: 88,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return CircleAvatar(
+                                  radius: 44,
+                                  backgroundColor: AppColors.purpleAccent,
+                                  child: Text(
+                                    initials.isEmpty ? 'N' : initials,
+                                    style: const TextStyle(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                );
+                              },
                             )
-                          : null,
+                          : (widget.profile?.avatarUrl.isNotEmpty == true
+                              ? Image.network(
+                                  widget.profile!.avatarUrl,
+                                  width: 88,
+                                  height: 88,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return CircleAvatar(
+                                      radius: 44,
+                                      backgroundColor: AppColors.purpleAccent,
+                                      child: Text(
+                                        initials.isEmpty ? 'N' : initials,
+                                        style: const TextStyle(
+                                          fontSize: 28,
+                                          fontWeight: FontWeight.w900,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+                              : CircleAvatar(
+                                  radius: 44,
+                                  backgroundColor: AppColors.purpleAccent,
+                                  child: Text(
+                                    initials.isEmpty ? 'N' : initials,
+                                    style: const TextStyle(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                )),
                     ),
                     if (_isEditing)
                       Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: GestureDetector(
-                          onTap: _pickAvatar,
-                          child: Container(
-                            width: 36,
-                            height: 36,
-                            decoration: BoxDecoration(
-                              color: AppColors.ledOn,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: AppColors.bgSecondary,
-                                width: 2,
+                        right: -5,
+                        bottom: -5,
+                        child: Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: _pickAvatar,
+                            borderRadius: BorderRadius.circular(25),
+                            child: Container(
+                              width: 50,
+                              height: 50,
+                              decoration: BoxDecoration(
+                                color: AppColors.ledOn,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppColors.bgSecondary,
+                                  width: 3,
+                                ),
                               ),
-                            ),
-                            child: const Icon(
-                              Icons.camera_alt_rounded,
-                              size: 18,
-                              color: Colors.white,
+                              child: const Icon(
+                                Icons.camera_alt_rounded,
+                                size: 24,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
