@@ -177,9 +177,12 @@ class NexusLedState extends ChangeNotifier {
     });
   }
 
-  Future<void> uploadAvatar(String filePath) async {
+  Future<void> uploadAvatar({
+    required Uint8List bytes,
+    required String fileName,
+  }) async {
     await _run(() async {
-      final avatarUrl = await _supabase.uploadAvatar(filePath);
+      final avatarUrl = await _supabase.uploadAvatarBytes(bytes, fileName);
       if (avatarUrl != null) {
         await _supabase.updateAvatarUrl(avatarUrl);
         await refreshRemoteData();

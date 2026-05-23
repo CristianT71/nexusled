@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -8,7 +6,6 @@ import '../models/led_event_model.dart';
 import '../models/mqtt_config_model.dart';
 import '../models/profile_model.dart';
 import '../models/register_data_model.dart';
-import '../models/supabase_config_model.dart';
 import '../models/support_ticket_model.dart';
 
 class SupabaseService {
@@ -22,26 +19,29 @@ class SupabaseService {
 
   Future<void> initialize() async {
     if (_initialized) return;
-    
+
     // Try environment variables (for web/Netlify with --dart-define)
-    String? url = const String.fromEnvironment('SUPABASE_URL', defaultValue: '');
-    String? anonKey = const String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
-    
+    String? url = const String.fromEnvironment(
+      'SUPABASE_URL',
+      defaultValue: '',
+    );
+    String? anonKey = const String.fromEnvironment(
+      'SUPABASE_ANON_KEY',
+      defaultValue: '',
+    );
+
     // Fallback to dotenv (for APK/desktop with .env file)
     if (url.isEmpty || anonKey.isEmpty) {
       url = dotenv.env['SUPABASE_URL']?.trim();
       anonKey = dotenv.env['SUPABASE_ANON_KEY']?.trim();
     }
-    
+
     if (url == null || url.isEmpty || anonKey == null || anonKey.isEmpty) {
       _initialized = false;
       return;
     }
-    
-    await Supabase.initialize(
-      url: url,
-      anonKey: anonKey,
-    );
+
+    await Supabase.initialize(url: url, anonKey: anonKey);
     _initialized = true;
   }
 
@@ -130,49 +130,42 @@ class SupabaseService {
     final supabase = client;
     final user = currentUser;
     if (supabase == null || user == null) return;
-    await supabase.from('profiles').update({
-      'full_name': fullName,
-      'username': username,
-      'phone': phone,
-      'updated_at': DateTime.now().toIso8601String(),
-    }).eq('id', user.id);
+    await supabase
+        .from('profiles')
+        .update({
+          'full_name': fullName,
+          'username': username,
+          'phone': phone,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', user.id);
   }
 
-  Future<String?> uploadAvatar(String filePath) async {
+  Future<String?> uploadAvatarBytes(Uint8List bytes, String fileName) async {
     final supabase = client;
     final user = currentUser;
     if (supabase == null || user == null) {
       throw Exception('Usuario no autenticado o Supabase no configurado');
     }
 
-    final file = File(filePath);
-    if (!file.existsSync()) {
-      throw Exception('El archivo no existe: $filePath');
-    }
-
-    final fileExt = filePath.split('.').last;
-    final fileName = '${user.id}/avatar.$fileExt';
-
-    print('Subiendo avatar: $fileName');
-    print('Tamaño del archivo: ${file.lengthSync()} bytes');
+    final fileExt = fileName.contains('.') ? fileName.split('.').last : 'jpg';
+    final storagePath = '${user.id}/avatar.$fileExt';
 
     try {
-      await supabase.storage.from('avatars').upload(
-        fileName,
-        file,
-        fileOptions: const FileOptions(
-          cacheControl: '3600',
-          upsert: true,
-        ),
-      );
-      print('Avatar subido exitosamente');
+      await supabase.storage
+          .from('avatars')
+          .uploadBinary(
+            storagePath,
+            bytes,
+            fileOptions: const FileOptions(cacheControl: '3600', upsert: true),
+          );
     } catch (e) {
-      print('Error al subir avatar: $e');
       throw Exception('Error al subir avatar: $e');
     }
 
-    final publicUrl = supabase.storage.from('avatars').getPublicUrl(fileName);
-    print('URL pública: $publicUrl');
+    final publicUrl = supabase.storage
+        .from('avatars')
+        .getPublicUrl(storagePath);
     return publicUrl;
   }
 
@@ -180,10 +173,13 @@ class SupabaseService {
     final supabase = client;
     final user = currentUser;
     if (supabase == null || user == null) return;
-    await supabase.from('profiles').update({
-      'avatar_url': avatarUrl,
-      'updated_at': DateTime.now().toIso8601String(),
-    }).eq('id', user.id);
+    await supabase
+        .from('profiles')
+        .update({
+          'avatar_url': avatarUrl,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', user.id);
   }
 
   Future<List<LedEventModel>> fetchLedEvents({int limit = 100}) async {

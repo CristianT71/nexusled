@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,8 +19,17 @@ class ProfileScreen extends StatefulWidget {
 
   final ProfileModel? profile;
   final VoidCallback onLogout;
-  final Future<void> Function({required String fullName, required String username, required String phone}) onUpdateProfile;
-  final Future<void> Function(String filePath) onUploadAvatar;
+  final Future<void> Function({
+    required String fullName,
+    required String username,
+    required String phone,
+  })
+  onUpdateProfile;
+  final Future<void> Function({
+    required Uint8List bytes,
+    required String fileName,
+  })
+  onUploadAvatar;
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -29,7 +38,8 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _isEditing = false;
   bool _isLoading = false;
-  String? _selectedAvatarPath;
+  Uint8List? _selectedAvatarBytes;
+  String? _selectedAvatarName;
   late TextEditingController _fullNameController;
   late TextEditingController _usernameController;
   late TextEditingController _phoneController;
@@ -37,8 +47,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _fullNameController = TextEditingController(text: widget.profile?.fullName ?? '');
-    _usernameController = TextEditingController(text: widget.profile?.username ?? '');
+    _fullNameController = TextEditingController(
+      text: widget.profile?.fullName ?? '',
+    );
+    _usernameController = TextEditingController(
+      text: widget.profile?.username ?? '',
+    );
     _phoneController = TextEditingController(text: widget.profile?.phone ?? '');
   }
 
@@ -51,7 +65,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _pickAvatar() async {
-    print('_pickAvatar: Iniciando selección de imagen');
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(
       source: ImageSource.gallery,
@@ -60,36 +73,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
       imageQuality: 85,
     );
     if (image != null) {
-      print('_pickAvatar: Imagen seleccionada: ${image.path}');
-      setState(() => _selectedAvatarPath = image.path);
-      print('_pickAvatar: _selectedAvatarPath actualizado: $_selectedAvatarPath');
-    } else {
-      print('_pickAvatar: No se seleccionó ninguna imagen');
+      final bytes = await image.readAsBytes();
+      if (!mounted) return;
+      setState(() {
+        _selectedAvatarBytes = bytes;
+        _selectedAvatarName = image.name;
+      });
     }
   }
 
   Future<void> _saveProfile() async {
-    print('_saveProfile: Iniciando guardado');
-    print('_saveProfile: _selectedAvatarPath = $_selectedAvatarPath');
     setState(() => _isLoading = true);
     try {
-      if (_selectedAvatarPath != null) {
-        print('_saveProfile: Subiendo avatar: $_selectedAvatarPath');
-        await widget.onUploadAvatar(_selectedAvatarPath!);
-        print('_saveProfile: Avatar subido exitosamente');
-      } else {
-        print('_saveProfile: No hay avatar seleccionado para subir');
+      if (_selectedAvatarBytes != null) {
+        await widget.onUploadAvatar(
+          bytes: _selectedAvatarBytes!,
+          fileName: _selectedAvatarName ?? 'avatar.jpg',
+        );
       }
-      print('_saveProfile: Actualizando perfil');
       await widget.onUpdateProfile(
         fullName: _fullNameController.text,
         username: _usernameController.text,
         phone: _phoneController.text,
       );
-      print('_saveProfile: Perfil actualizado exitosamente');
       setState(() {
         _isEditing = false;
-        _selectedAvatarPath = null;
+        _selectedAvatarBytes = null;
+        _selectedAvatarName = null;
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -100,7 +110,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         );
       }
     } catch (e) {
-      print('_saveProfile: Error al guardar: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -139,9 +148,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Stack(
                   children: [
                     ClipOval(
-                      child: _selectedAvatarPath != null
-                          ? Image.file(
-                              File(_selectedAvatarPath!),
+                      child: _selectedAvatarBytes != null
+                          ? Image.memory(
+                              _selectedAvatarBytes!,
                               width: 88,
                               height: 88,
                               fit: BoxFit.cover,
@@ -160,60 +169,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               },
                             )
                           : (widget.profile?.avatarUrl.isNotEmpty == true
-                              ? Image.network(
-                                  widget.profile!.avatarUrl,
-                                  width: 88,
-                                  height: 88,
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return CircleAvatar(
-                                      radius: 44,
-                                      backgroundColor: AppColors.purpleAccent,
-                                      child: Text(
-                                        initials.isEmpty ? 'N' : initials,
-                                        style: const TextStyle(
-                                          fontSize: 28,
-                                          fontWeight: FontWeight.w900,
+                                ? Image.network(
+                                    widget.profile!.avatarUrl,
+                                    width: 88,
+                                    height: 88,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return CircleAvatar(
+                                        radius: 44,
+                                        backgroundColor: AppColors.purpleAccent,
+                                        child: Text(
+                                          initials.isEmpty ? 'N' : initials,
+                                          style: const TextStyle(
+                                            fontSize: 28,
+                                            fontWeight: FontWeight.w900,
+                                          ),
                                         ),
+                                      );
+                                    },
+                                  )
+                                : CircleAvatar(
+                                    radius: 44,
+                                    backgroundColor: AppColors.purpleAccent,
+                                    child: Text(
+                                      initials.isEmpty ? 'N' : initials,
+                                      style: const TextStyle(
+                                        fontSize: 28,
+                                        fontWeight: FontWeight.w900,
                                       ),
-                                    );
-                                  },
-                                )
-                              : CircleAvatar(
-                                  radius: 44,
-                                  backgroundColor: AppColors.purpleAccent,
-                                  child: Text(
-                                    initials.isEmpty ? 'N' : initials,
-                                    style: const TextStyle(
-                                      fontSize: 28,
-                                      fontWeight: FontWeight.w900,
                                     ),
-                                  ),
-                                )),
+                                  )),
                     ),
                     if (_isEditing)
                       Positioned(
-                        right: -5,
-                        bottom: -5,
+                        right: -2,
+                        bottom: -2,
                         child: Material(
                           color: Colors.transparent,
                           child: InkWell(
                             onTap: _pickAvatar,
-                            borderRadius: BorderRadius.circular(25),
+                            borderRadius: BorderRadius.circular(20),
                             child: Container(
-                              width: 50,
-                              height: 50,
+                              width: 36,
+                              height: 36,
                               decoration: BoxDecoration(
                                 color: AppColors.ledOn,
                                 shape: BoxShape.circle,
                                 border: Border.all(
                                   color: AppColors.bgSecondary,
-                                  width: 3,
+                                  width: 2,
                                 ),
                               ),
                               child: const Icon(
-                                Icons.camera_alt_rounded,
-                                size: 24,
+                                Icons.add_a_photo_outlined,
+                                size: 18,
                                 color: Colors.white,
                               ),
                             ),
@@ -246,7 +255,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         children: [
                           _ProfileChip(
                             label:
-                                widget.profile?.authProvider.toUpperCase() ?? 'EMAIL',
+                                widget.profile?.authProvider.toUpperCase() ??
+                                'EMAIL',
                             icon: Icons.verified_user_rounded,
                           ),
                           _ProfileChip(
@@ -311,13 +321,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 onPressed: () {
                                   setState(() {
                                     _isEditing = false;
-                                    _fullNameController.text = widget.profile?.fullName ?? '';
-                                    _usernameController.text = widget.profile?.username ?? '';
-                                    _phoneController.text = widget.profile?.phone ?? '';
+                                    _selectedAvatarBytes = null;
+                                    _selectedAvatarName = null;
+                                    _fullNameController.text =
+                                        widget.profile?.fullName ?? '';
+                                    _usernameController.text =
+                                        widget.profile?.username ?? '';
+                                    _phoneController.text =
+                                        widget.profile?.phone ?? '';
                                   });
                                 },
                                 icon: Icons.cancel_rounded,
-                                colors: const [Color(0xFF666666), Color(0xFF444444)],
+                                colors: const [
+                                  Color(0xFF666666),
+                                  Color(0xFF444444),
+                                ],
                               ),
                             ),
                           ],
@@ -381,7 +399,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: _ProfileInfoCard(
                             title: 'Método de acceso',
                             value:
-                                widget.profile?.authProvider.toUpperCase() ?? 'EMAIL',
+                                widget.profile?.authProvider.toUpperCase() ??
+                                'EMAIL',
                             icon: Icons.lock_rounded,
                           ),
                         ),
