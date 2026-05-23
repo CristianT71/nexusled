@@ -117,6 +117,15 @@ class NexusLedState extends ChangeNotifier {
     });
   }
 
+  Future<void> loginWithGithub() async {
+    await _run(() async {
+      await _supabase.initialize();
+      await _supabase.signInWithGithub();
+      authenticated = _supabase.authenticated;
+      if (authenticated) await refreshRemoteData();
+    });
+  }
+
   Future<void> register(RegisterDataModel data) async {
     await _run(() async {
       await _supabase.initialize();

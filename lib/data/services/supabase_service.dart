@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -56,9 +57,24 @@ class SupabaseService {
   Future<void> signInWithGoogle() async {
     final supabase = client;
     if (supabase == null) throw StateError('Supabase no está configurado.');
+    final redirectUrl = kIsWeb
+        ? 'https://nexusled.netlify.app/auth/callback'
+        : 'io.supabase.nexusled://login-callback/';
     await supabase.auth.signInWithOAuth(
       OAuthProvider.google,
-      redirectTo: 'io.supabase.nexusled://login-callback/',
+      redirectTo: redirectUrl,
+    );
+  }
+
+  Future<void> signInWithGithub() async {
+    final supabase = client;
+    if (supabase == null) throw StateError('Supabase no está configurado.');
+    final redirectUrl = kIsWeb
+        ? 'https://nexusled.netlify.app/auth/callback'
+        : 'io.supabase.nexusled://login-callback/';
+    await supabase.auth.signInWithOAuth(
+      OAuthProvider.github,
+      redirectTo: redirectUrl,
     );
   }
 

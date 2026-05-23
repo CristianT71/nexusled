@@ -68,6 +68,7 @@ class _NexusLedAppState extends State<NexusLedApp> {
               onLogin: _state.login,
               onGoToRegister: () => setState(() => _showRegister = true),
               onGoogleLogin: _state.loginWithGoogle,
+              onGithubLogin: _state.loginWithGithub,
               loading: _state.loading,
               error: _state.lastError,
             ),

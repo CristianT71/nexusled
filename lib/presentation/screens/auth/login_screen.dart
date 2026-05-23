@@ -11,6 +11,7 @@ class LoginScreen extends StatefulWidget {
     required this.onLogin,
     required this.onGoToRegister,
     required this.onGoogleLogin,
+    required this.onGithubLogin,
     required this.loading,
     required this.error,
   });
@@ -18,6 +19,7 @@ class LoginScreen extends StatefulWidget {
   final Future<void> Function(String email, String password) onLogin;
   final VoidCallback onGoToRegister;
   final Future<void> Function() onGoogleLogin;
+  final Future<void> Function() onGithubLogin;
   final bool loading;
   final String? error;
 
@@ -97,10 +99,35 @@ class _LoginScreenState extends State<LoginScreen> {
                   icon: Icons.login_rounded,
                 ),
                 const SizedBox(height: 14),
-                OutlinedButton.icon(
-                  onPressed: widget.loading ? null : widget.onGoogleLogin,
-                  icon: const Icon(Icons.g_mobiledata_rounded, size: 20),
-                  label: const Text('Iniciar sesión con Google'),
+                const Text(
+                  'O inicia sesión con:',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: AppColors.textSecondary),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    IconButton(
+                      onPressed: widget.loading ? null : widget.onGoogleLogin,
+                      icon: const Icon(Icons.g_mobiledata_rounded, size: 32),
+                      tooltip: 'Google',
+                      style: IconButton.styleFrom(
+                        backgroundColor: AppColors.bgSecondary.withValues(alpha: 0.5),
+                        foregroundColor: AppColors.textPrimary,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    IconButton(
+                      onPressed: widget.loading ? null : widget.onGithubLogin,
+                      icon: const Icon(Icons.code_rounded, size: 32),
+                      tooltip: 'GitHub',
+                      style: IconButton.styleFrom(
+                        backgroundColor: AppColors.bgSecondary.withValues(alpha: 0.5),
+                        foregroundColor: AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
                 ),
                 if (widget.error != null) ...[
                   const SizedBox(height: 14),
