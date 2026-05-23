@@ -1,0 +1,1 @@
+void registerProtocolHandler(String scheme) {}

@@ -11,10 +11,12 @@ import 'presentation/screens/main_shell.dart';
 import 'presentation/screens/splash_screen.dart';
 import 'presentation/state/nexus_led_state.dart';
 import 'core/utils/browser_path.dart';
+import 'core/utils/protocol_handler.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env', isOptional: true);
+  registerProtocolHandler('io.supabase.nexusled');
   runApp(const NexusLedApp());
 }
 
