@@ -75,9 +75,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     setState(() => _isLoading = true);
     try {
       await widget.onUpdateProfile(
-        _fullNameController.text,
-        _usernameController.text,
-        _phoneController.text,
+        fullName: _fullNameController.text,
+        username: _usernameController.text,
+        phone: _phoneController.text,
       );
       setState(() => _isEditing = false);
     } catch (e) {
