@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -27,6 +29,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   bool _isEditing = false;
   bool _isLoading = false;
+  String? _selectedAvatarPath;
   late TextEditingController _fullNameController;
   late TextEditingController _usernameController;
   late TextEditingController _phoneController;
@@ -47,7 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  Future<void> _pickAndUploadAvatar() async {
+  Future<void> _pickAvatar() async {
     final picker = ImagePicker();
     final XFile? image = await picker.pickImage(
       source: ImageSource.gallery,
@@ -56,45 +59,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
       imageQuality: 85,
     );
     if (image != null) {
-      setState(() => _isLoading = true);
-      try {
-        await widget.onUploadAvatar(image.path);
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Avatar actualizado correctamente'),
-              backgroundColor: AppColors.ledOn,
-            ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error al subir avatar: $e'),
-              backgroundColor: AppColors.ledOff,
-            ),
-          );
-        }
-      } finally {
-        setState(() => _isLoading = false);
-      }
+      setState(() => _selectedAvatarPath = image.path);
     }
   }
 
   Future<void> _saveProfile() async {
     setState(() => _isLoading = true);
     try {
+      if (_selectedAvatarPath != null) {
+        await widget.onUploadAvatar(_selectedAvatarPath!);
+      }
       await widget.onUpdateProfile(
         fullName: _fullNameController.text,
         username: _usernameController.text,
         phone: _phoneController.text,
       );
-      setState(() => _isEditing = false);
+      setState(() {
+        _isEditing = false;
+        _selectedAvatarPath = null;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Perfil actualizado correctamente'),
+            backgroundColor: AppColors.ledOn,
+          ),
+        );
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.ledOff,
+          ),
         );
       }
     } finally {
@@ -129,43 +127,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     CircleAvatar(
                       radius: 44,
                       backgroundColor: AppColors.purpleAccent,
-                      backgroundImage: widget.profile?.avatarUrl.isNotEmpty == true
-                          ? NetworkImage(widget.profile!.avatarUrl)
-                          : null,
-                      child: widget.profile?.avatarUrl.isNotEmpty == true
-                          ? null
-                          : Text(
+                      backgroundImage: _selectedAvatarPath != null
+                          ? FileImage(File(_selectedAvatarPath!))
+                          : (widget.profile?.avatarUrl.isNotEmpty == true
+                              ? NetworkImage(widget.profile!.avatarUrl)
+                              : null),
+                      child: _selectedAvatarPath == null &&
+                              (widget.profile?.avatarUrl.isEmpty ?? true)
+                          ? Text(
                               initials.isEmpty ? 'N' : initials,
                               style: const TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.w900,
                               ),
-                            ),
+                            )
+                          : null,
                     ),
-                    Positioned(
-                      right: 0,
-                      bottom: 0,
-                      child: GestureDetector(
-                        onTap: _pickAndUploadAvatar,
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: AppColors.ledOn,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: AppColors.bgSecondary,
-                              width: 2,
+                    if (_isEditing)
+                      Positioned(
+                        right: 0,
+                        bottom: 0,
+                        child: GestureDetector(
+                          onTap: _pickAvatar,
+                          child: Container(
+                            width: 36,
+                            height: 36,
+                            decoration: BoxDecoration(
+                              color: AppColors.ledOn,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: AppColors.bgSecondary,
+                                width: 2,
+                              ),
                             ),
-                          ),
-                          child: const Icon(
-                            Icons.camera_alt_rounded,
-                            size: 16,
-                            color: Colors.white,
+                            child: const Icon(
+                              Icons.camera_alt_rounded,
+                              size: 18,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
                   ],
                 ),
                 const SizedBox(width: 18),
