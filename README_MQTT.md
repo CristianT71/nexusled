@@ -65,7 +65,7 @@ En NexusLED la app publica comandos como:
 
 Suscribirse es decirle al broker: “quiero recibir todo lo que llegue a este tópico”.
 
-En NexusLED el ESP32 se suscribe al tópico de control para escuchar los comandos.
+En NexusLED el ESP32 se suscribe al tópico de control para comandos ON/OFF y al tópico de color para comandos RGB.
 
 ## ¿Cómo se conecta NexusLED con MQTT?
 
@@ -74,8 +74,8 @@ El flujo normal es este:
 1. El usuario abre NexusLED.
 2. La app carga la configuración guardada.
 3. NexusLED se conecta al broker MQTT usando host, puerto, usuario y contraseña.
-4. La app publica el comando en el tópico de control.
-5. El ESP32, que está suscrito a ese tópico, recibe el mensaje.
+4. La app publica el comando en el tópico de control o en el tópico de color.
+5. El ESP32, que está suscrito a esos tópicos, recibe el mensaje.
 6. El ESP32 ejecuta la acción sobre el LED.
 7. La app puede recibir un mensaje de confirmación o estado.
 
@@ -165,13 +165,13 @@ Uso básico:
 3. Guarda la configuración.
 4. Prueba la conexión.
 5. Ve a Control LED.
-6. Envia comandos de color (RED, GREEN, BLUE) o apagar (OFF).
+6. Envía comandos de color (`red`, `green`, `blue`) o apagado (`off`).
 
 ## Resumen rápido
 
 - MQTT es el protocolo de mensajería.
 - El broker es el servidor que reparte mensajes.
-- El ESP32 escucha los tópicos.
+- El ESP32 escucha el tópico de control y el tópico de color.
 - NexusLED publica comandos.
 - El ESP32 los recibe y controla el LED.
 - SSL/TLS protege la conexión.

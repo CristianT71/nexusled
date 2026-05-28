@@ -20,8 +20,9 @@ https://nexusled.netlify.app/
 NexusLED centraliza el control de un sistema IoT con estas funciones principales:
 
 - iniciar sesión con Supabase usando correo y contraseña;
-- iniciar sesión con Google;
+- iniciar sesión con Google y GitHub;
 - registrar usuarios nuevos;
+- editar perfil de usuario y subir avatar a Supabase Storage;
 - guardar y recuperar configuración MQTT;
 - controlar un LED RGB con tres colores (RED, GREEN, BLUE);
 - enviar comandos de color y apagado al LED;
@@ -54,7 +55,12 @@ La pantalla inicial muestra una bienvenida breve mientras la app termina de carg
 
 ### Login
 
-Permite iniciar sesión con correo y contraseña o con Google. Desde aquí se entra al sistema cuando Supabase está configurado.
+Permite iniciar sesión con correo y contraseña, Google o GitHub. Los botones sociales usan logos SVG y requieren que los providers OAuth estén habilitados en Supabase.
+
+Para OAuth se usan estas rutas de retorno:
+
+- Web: `https://nexusled.netlify.app/auth/callback`
+- Móvil/escritorio: `io.supabase.nexusled://login-callback`
 
 ### Registro
 
@@ -151,7 +157,7 @@ Muestra el resumen de la cuenta activa:
 - teléfono;
 - proveedor de autenticación.
 
-También permite cerrar sesión.
+También permite editar información básica, seleccionar una imagen de perfil, previsualizarla antes de guardar, subirla al bucket `avatars` de Supabase Storage y cerrar sesión.
 
 ### Quiénes somos
 
@@ -185,6 +191,7 @@ Supabase se usa para:
 
 - autenticación;
 - perfil de usuario;
+- avatar de usuario mediante Supabase Storage;
 - eventos LED;
 - estado del dispositivo;
 - tickets de soporte;
@@ -217,6 +224,10 @@ El proyecto usa estas tablas en Supabase:
 - `device_status`
 - `support_tickets`
 - `sessions`
+
+También usa el bucket de Storage:
+
+- `avatars`
 
 La lógica actual intenta mantener una sola configuración MQTT activa por usuario y evitar duplicados.
 
@@ -288,6 +299,11 @@ La versión web se compila con el script `scripts/netlify-build.sh`, que instala
 
 El archivo de configuración es `netlify.toml`.
 
+En Netlify deben configurarse estas variables de entorno:
+
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+
 ## Publicación en GitHub Releases
 
 La distribución publicada del proyecto se maneja así:
@@ -311,11 +327,13 @@ La distribución publicada del proyecto se maneja así:
 ## Flujo de uso recomendado
 
 1. Configurar Supabase.
-2. Registrar o iniciar sesión.
-3. Guardar la configuración MQTT.
-4. Probar la conexión.
-5. Entrar a Control LED y enviar comandos.
-6. Revisar Dashboard, Estadísticas e Información del sistema.
+2. Ejecutar `supabase_schema.sql` para crear tablas, políticas y el bucket `avatars`.
+3. Configurar Google y GitHub como providers OAuth si se usarán esos inicios de sesión.
+4. Registrar o iniciar sesión.
+5. Guardar la configuración MQTT.
+6. Probar la conexión.
+7. Entrar a Control LED y enviar comandos.
+8. Revisar Dashboard, Estadísticas e Información del sistema.
 
 ## Notas importantes
 
@@ -326,7 +344,6 @@ La distribución publicada del proyecto se maneja así:
 
 ## Próximos pasos posibles
 
-- conectar el sketch del ESP32 con los tópicos definitivos;
 - endurecer políticas de seguridad en Supabase;
 - agregar más métricas históricas por color;
 - mejorar la vista de soporte con documentación externa.
