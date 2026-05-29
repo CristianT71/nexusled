@@ -67,7 +67,7 @@ class SupabaseService {
       redirectTo: redirectUrl,
       authScreenLaunchMode: kIsWeb
           ? LaunchMode.platformDefault
-          : LaunchMode.externalApplication,
+          : LaunchMode.inAppWebView,
     );
   }
 
@@ -83,7 +83,7 @@ class SupabaseService {
       redirectTo: redirectUrl,
       authScreenLaunchMode: kIsWeb
           ? LaunchMode.platformDefault
-          : LaunchMode.externalApplication,
+          : LaunchMode.inAppWebView,
     );
   }
 
