@@ -28,12 +28,12 @@ const char* MQTT_TOPIC_COLOR = "nexusled/led/color";
 const char* MQTT_TOPIC_HEARTBEAT = "nexusled/heartbeat";
 
 const uint8_t LED_PIN = LED_BUILTIN;
-const uint8_t RED_PIN = D3;
-const uint8_t GREEN_PIN = D5;
-const uint8_t BLUE_PIN = D7;
+const uint8_t RED_PIN = D5;
+const uint8_t GREEN_PIN = D7;
+const uint8_t BLUE_PIN = D3;
 
-const uint8_t RGB_ON = LOW;
-const uint8_t RGB_OFF = HIGH;
+const uint8_t RGB_ON = HIGH;
+const uint8_t RGB_OFF = LOW;
 
 bool ledState = false;
 unsigned long lastHeartbeat = 0;
