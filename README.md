@@ -279,6 +279,20 @@ El APK generado normalmente queda en:
 build/app/outputs/flutter-apk/app-release.apk
 ```
 
+## Build de Android AAB (para Google Play)
+
+```bash
+flutter build appbundle --release
+```
+
+El AAB generado queda en:
+
+```bash
+build/app/outputs/bundle/release/app-release.aab
+```
+
+Para firmar el AAB se requiere un keystore configurado en `android/key.properties` y `android/app/upload-keystore.p12`.
+
 ## Build de Windows
 
 ```bash
@@ -310,7 +324,13 @@ La distribución publicada del proyecto se maneja así:
 
 - código fuente en GitHub;
 - APK de Android como archivo adjunto en Releases;
+- AAB de Android (para Google Play) como archivo adjunto en Releases;
 - Windows como ZIP de la carpeta `Release` en Releases.
+
+Los archivos se renombran con versión para facilitar identificación:
+- `NexusLED-vX.Y.Z-android.apk`
+- `NexusLED-vX.Y.Z-android.aab`
+- `NexusLED-vX.Y.Z-windows-x64.zip`
 
 ## Estructura del proyecto
 
@@ -323,6 +343,7 @@ La distribución publicada del proyecto se maneja así:
 - `esp32/README.md`: guía corta del sketch MQTT y sus constantes.
 - `supabase_schema.sql`: esquema de tablas y políticas de Supabase.
 - `netlify.toml`: configuración de despliegue web.
+- `GUIA_PERSONALIZACION.md`: guía para modificar colores, tamaños y propiedades.
 
 ## Flujo de uso recomendado
 

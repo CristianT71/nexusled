@@ -54,16 +54,18 @@ Abre `nexusled_nano_esp32.ino` y modifica estas constantes:
 El sketch usa estos pines para el LED RGB:
 
 - LED_PIN: LED_BUILTIN
-- RED_PIN: D3
-- GREEN_PIN: D5
-- BLUE_PIN: D7
+- RED_PIN: D5
+- GREEN_PIN: D7
+- BLUE_PIN: D3
 
-Cada pin RGB controla un color. En este sketch el RGB usa lógica invertida:
+Cada pin RGB controla un color. En este sketch el RGB usa lógica directa:
 
-- `RGB_ON = LOW`
-- `RGB_OFF = HIGH`
+- `RGB_ON = HIGH`
+- `RGB_OFF = LOW`
 
-Cuando se selecciona un color, ese pin se pone en `LOW` y los demás en `HIGH`.
+Cuando se selecciona un color, ese pin se pone en `HIGH` y los demás en `LOW`.
+
+**Nota:** Los pines RGB se ajustaron según la conexión física del hardware para que los colores coincidan con los comandos enviados desde la app.
 
 ## SSL/TLS
 
