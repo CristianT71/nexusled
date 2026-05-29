@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
@@ -66,43 +67,49 @@ class SidebarWidget extends StatelessWidget {
                     expanded: expanded,
                     onSelect: onSelect,
                   ),
-                  _Item(
-                    section: AppSection.statistics,
-                    current: current,
-                    expanded: expanded,
-                    onSelect: onSelect,
-                  ),
-                  _SectionLabel('INFORMACIÓN', expanded: expanded),
-                  _Item(
-                    section: AppSection.about,
-                    current: current,
-                    expanded: expanded,
-                    onSelect: onSelect,
-                  ),
-                  _Item(
-                    section: AppSection.services,
-                    current: current,
-                    expanded: expanded,
-                    onSelect: onSelect,
-                  ),
-                  _Item(
-                    section: AppSection.systemInfo,
-                    current: current,
-                    expanded: expanded,
-                    onSelect: onSelect,
-                  ),
+                  if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
+                    _Item(
+                      section: AppSection.statistics,
+                      current: current,
+                      expanded: expanded,
+                      onSelect: onSelect,
+                    ),
+                  if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
+                    _SectionLabel('INFORMACIÓN', expanded: expanded),
+                  if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
+                    _Item(
+                      section: AppSection.about,
+                      current: current,
+                      expanded: expanded,
+                      onSelect: onSelect,
+                    ),
+                  if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
+                    _Item(
+                      section: AppSection.services,
+                      current: current,
+                      expanded: expanded,
+                      onSelect: onSelect,
+                    ),
+                  if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
+                    _Item(
+                      section: AppSection.systemInfo,
+                      current: current,
+                      expanded: expanded,
+                      onSelect: onSelect,
+                    ),
                   _SectionLabel('CONFIGURACIÓN', expanded: expanded),
                   _ConnectionsItem(
                     current: current,
                     expanded: expanded,
                     onSelect: onSelect,
                   ),
-                  _Item(
-                    section: AppSection.support,
-                    current: current,
-                    expanded: expanded,
-                    onSelect: onSelect,
-                  ),
+                  if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
+                    _Item(
+                      section: AppSection.support,
+                      current: current,
+                      expanded: expanded,
+                      onSelect: onSelect,
+                    ),
                   _Item(
                     section: AppSection.profile,
                     current: current,
