@@ -11,14 +11,9 @@ class AboutScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(22),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: kIsWeb ? 800 : double.infinity,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
               GlassCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,9 +152,7 @@ class AboutScreen extends StatelessWidget {
                   ],
                 ),
               ),
-            ],
-          ),
-        ),
+        ],
       ),
     );
   }
