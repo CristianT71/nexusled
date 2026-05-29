@@ -62,7 +62,6 @@ class AboutScreen extends StatelessWidget {
                   child: Image.asset(
                     'assets/Images/Grupo_NexusLed.png',
                     width: double.infinity,
-                    height: kIsWeb ? 500 : null,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       debugPrint('Error cargando imagen: $error');
