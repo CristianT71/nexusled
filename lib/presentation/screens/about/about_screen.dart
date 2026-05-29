@@ -59,7 +59,7 @@ class AboutScreen extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: Image.asset(
-                    'assets/Images/Foto-grupal_nexusled.jpeg',
+                    'assets/Images/Foto-grupal-nexusled-new.jpeg',
                     width: double.infinity,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
