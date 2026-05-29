@@ -73,7 +73,7 @@ flutter:
   uses-material-design: true
   assets:
     - .env
-    - assets/Images/Foto-grupal-nexusled-new.jpeg
+    - assets/Images/Grupo_NexusLed.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -59,8 +59,9 @@ class AboutScreen extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: Image.asset(
-                    'assets/Images/Foto-grupal-nexusled-new.jpeg',
+                    'assets/Images/Grupo_NexusLed.png',
                     width: double.infinity,
+                    height: kIsWeb ? 300 : null,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       debugPrint('Error cargando imagen: $error');
