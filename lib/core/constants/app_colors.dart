@@ -4,7 +4,7 @@ class AppColors {
   // Dark tech gradient base: Dark blue to black
   static const bgPrimary = Color(0xFF0A1128); // Very dark blue
   static const bgSecondary = Color(0xFF0F1629); // Dark blue-black
-  static const deepBlue = Color(0xFF0D1B2A); // Deep tech blue
+  static const deepBlue = Color.fromARGB(255, 210, 214, 218); // Deep tech blue
   static const accentBlue = Color.fromARGB(255, 177, 202, 234); // Medium tech blue
   static const brightBlue = Color.fromARGB(255, 255, 255, 255); // Electric blue
   static const neonBlue = Color.fromARGB(255, 144, 184, 192); // Neon cyan-blue
