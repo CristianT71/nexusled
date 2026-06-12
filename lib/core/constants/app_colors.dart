@@ -30,6 +30,7 @@ class AppColors {
   static const purpleDeep = deepBlue;
   static const purpleMid = accentBlue;
   static const purpleAccent = brightBlue;
-  static const purpleBright = Color.fromARGB(255, 43, 255, 0);
+  static const purpleBright = neonBlue;
   static const purpleGlow = accentGlow;
+  static const colorTarjetaAbout = Color.fromARGB(255, 34, 255, 0);
 }
