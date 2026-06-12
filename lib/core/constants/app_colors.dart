@@ -4,16 +4,16 @@ class AppColors {
   // Dark tech gradient base: Dark blue to black
   static const bgPrimary = Color(0xFF0A1128); // Very dark blue
   static const bgSecondary = Color(0xFF0F1629); // Dark blue-black
-  static const deepBlue = Color.fromARGB(255, 210, 214, 218); // Deep tech blue
-  static const accentBlue = Color.fromARGB(255, 177, 202, 234); // Medium tech blue
-  static const brightBlue = Color.fromARGB(255, 255, 255, 255); // Electric blue
-  static const neonBlue = Color.fromARGB(255, 144, 184, 192); // Neon cyan-blue
+  static const deepBlue = Color(0xFF0D1B2A); // Deep tech blue
+  static const accentBlue = Color(0xFF1E3A5F); // Medium tech blue
+  static const brightBlue = Color(0xFF2563EB); // Electric blue
+  static const neonBlue = Color(0xFF00D9FF); // Neon cyan-blue
   static const accentGlow = Color(0xFF0EA5E9); // Sky blue glow
 
   // Kept utility colors
   static const cyanGlow = Color(0xFF06B6D4); // Cyan accent
-  static const blueElectric = Color.fromARGB(255, 107, 130, 166); // Electric blue
-  static const magenta = Color.fromARGB(255, 230, 234, 235); // Neon accent
+  static const blueElectric = Color(0xFF3B82F6); // Electric blue
+  static const magenta = Color(0xFF00D9FF); // Neon accent
 
   // Text hierarchy (adjusted for dark tech)
   static const textPrimary = Color(0xFFF0F4F8); // Light blue-white
@@ -30,6 +30,6 @@ class AppColors {
   static const purpleDeep = deepBlue;
   static const purpleMid = accentBlue;
   static const purpleAccent = brightBlue;
-  static const purpleBright = neonBlue;
-  static const purpleGlow = Color.fromARGB(255, 194, 217, 227);
+  static const purpleBright = Color.fromARGB(255, 251, 254, 255);
+  static const purpleGlow = accentGlow;
 }
