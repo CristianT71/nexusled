@@ -69,11 +69,13 @@ class AboutScreen extends StatelessWidget {
                         debugPrint('Error cargando imagen: $error');
                         return Container(
                           height: 200,
-                          color: const Color.fromARGB(255, 65, 155, 30) .withValues(alpha: 0.1),
+                          color: AppColors.brightBlue.withValues(alpha: 0.1),
                           child: Center(
                             child: Text(
                               'Imagen no disponible',
-                              style: TextStyle(color: const Color.fromARGB(255, 201, 148, 160)),
+                              style: TextStyle(
+                                color: const Color.fromARGB(255, 201, 148, 160),
+                              ),
                             ),
                           ),
                         );

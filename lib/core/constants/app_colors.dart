@@ -6,7 +6,7 @@ class AppColors {
   static const bgSecondary = Color(0xFF0F1629); // Dark blue-black
   static const deepBlue = Color(0xFF0D1B2A); // Deep tech blue
   static const accentBlue = Color(0xFF1E3A5F); // Medium tech blue
-  static const brightBlue = Color(0xFF2563EB); // Electric blue
+  static const brightBlue = Color.fromARGB(255, 255, 255, 255); // Electric blue
   static const neonBlue = Color(0xFF00D9FF); // Neon cyan-blue
   static const accentGlow = Color(0xFF0EA5E9); // Sky blue glow
 
