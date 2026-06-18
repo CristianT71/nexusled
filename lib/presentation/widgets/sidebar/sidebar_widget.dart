@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../state/nexus_led_state.dart';
+import '../common/nexus_visual_styles.dart';
 
 class SidebarWidget extends StatelessWidget {
   const SidebarWidget({
@@ -16,6 +17,7 @@ class SidebarWidget extends StatelessWidget {
     required this.avatarUrl,
     required this.onSelect,
     required this.onLogout,
+    this.style = const SidebarStyle(),
   });
 
   final AppSection current;
@@ -25,6 +27,7 @@ class SidebarWidget extends StatelessWidget {
   final String? avatarUrl;
   final ValueChanged<AppSection> onSelect;
   final VoidCallback onLogout;
+  final SidebarStyle style;
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +35,10 @@ class SidebarWidget extends StatelessWidget {
       duration: const Duration(milliseconds: 280),
       width: expanded ? 260 : 82,
       decoration: BoxDecoration(
-        color: AppColors.purpleDeep.withValues(alpha: 0.92),
+        color: style.backgroundColor.withValues(alpha: style.backgroundOpacity),
         border: Border(
           right: BorderSide(
-            color: AppColors.purpleBright.withValues(alpha: 0.22),
+            color: style.borderColor.withValues(alpha: style.borderOpacity),
           ),
         ),
       ),
@@ -43,31 +46,34 @@ class SidebarWidget extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 18),
-            _Header(expanded: expanded),
+            _Header(expanded: expanded, style: style),
             const Divider(color: Colors.white12, height: 28),
             _UserMini(
               expanded: expanded,
               connected: connected,
               userName: userName,
               avatarUrl: avatarUrl,
+              style: style,
             ),
             const Divider(color: Colors.white12, height: 28),
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 children: [
-                  _SectionLabel('PRINCIPAL', expanded: expanded),
+                  _SectionLabel('PRINCIPAL', expanded: expanded, style: style),
                   _Item(
                     section: AppSection.dashboard,
                     current: current,
                     expanded: expanded,
                     onSelect: onSelect,
+                    style: style,
                   ),
                   _Item(
                     section: AppSection.control,
                     current: current,
                     expanded: expanded,
                     onSelect: onSelect,
+                    style: style,
                   ),
                   if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
                     _Item(
@@ -75,15 +81,17 @@ class SidebarWidget extends StatelessWidget {
                       current: current,
                       expanded: expanded,
                       onSelect: onSelect,
+                      style: style,
                     ),
                   if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
-                    _SectionLabel('INFORMACIÓN', expanded: expanded),
+                    _SectionLabel('INFORMACIÓN', expanded: expanded, style: style),
                   if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
                     _Item(
                       section: AppSection.about,
                       current: current,
                       expanded: expanded,
                       onSelect: onSelect,
+                      style: style,
                     ),
                   if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
                     _Item(
@@ -91,6 +99,7 @@ class SidebarWidget extends StatelessWidget {
                       current: current,
                       expanded: expanded,
                       onSelect: onSelect,
+                      style: style,
                     ),
                   if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
                     _Item(
@@ -98,12 +107,14 @@ class SidebarWidget extends StatelessWidget {
                       current: current,
                       expanded: expanded,
                       onSelect: onSelect,
+                      style: style,
                     ),
-                  _SectionLabel('CONFIGURACIÓN', expanded: expanded),
+                  _SectionLabel('CONFIGURACIÓN', expanded: expanded, style: style),
                   _ConnectionsItem(
                     current: current,
                     expanded: expanded,
                     onSelect: onSelect,
+                    style: style,
                   ),
                   if (kIsWeb || Platform.isWindows || Platform.isMacOS || Platform.isLinux)
                     _Item(
@@ -111,12 +122,14 @@ class SidebarWidget extends StatelessWidget {
                       current: current,
                       expanded: expanded,
                       onSelect: onSelect,
+                      style: style,
                     ),
                   _Item(
                     section: AppSection.profile,
                     current: current,
                     expanded: expanded,
                     onSelect: onSelect,
+                    style: style,
                   ),
                 ],
               ),
@@ -134,9 +147,10 @@ class SidebarWidget extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.expanded});
+  const _Header({required this.expanded, required this.style});
 
   final bool expanded;
+  final SidebarStyle style;
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +160,7 @@ class _Header extends StatelessWidget {
           : MainAxisAlignment.center,
       children: [
         const SizedBox(width: 18),
-        const Icon(Icons.bolt_rounded, color: AppColors.purpleGlow, size: 34),
+        Icon(Icons.bolt_rounded, color: style.accentColor, size: 34),
         if (expanded) const SizedBox(width: 10),
         if (expanded)
           const Text(
@@ -164,12 +178,14 @@ class _UserMini extends StatelessWidget {
     required this.connected,
     required this.userName,
     required this.avatarUrl,
+    required this.style,
   });
 
   final bool expanded;
   final bool connected;
   final String userName;
   final String? avatarUrl;
+  final SidebarStyle style;
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +197,7 @@ class _UserMini extends StatelessWidget {
             : MainAxisAlignment.center,
         children: [
           CircleAvatar(
-            backgroundColor: AppColors.purpleAccent,
+            backgroundColor: style.avatarBackgroundColor,
             backgroundImage: avatarUrl != null && avatarUrl!.isNotEmpty
                 ? NetworkImage(avatarUrl!)
                 : null,
@@ -217,10 +233,11 @@ class _UserMini extends StatelessWidget {
 }
 
 class _SectionLabel extends StatelessWidget {
-  const _SectionLabel(this.text, {required this.expanded});
+  const _SectionLabel(this.text, {required this.expanded, required this.style});
 
   final String text;
   final bool expanded;
+  final SidebarStyle style;
 
   @override
   Widget build(BuildContext context) {
@@ -229,8 +246,8 @@ class _SectionLabel extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(12, 18, 12, 8),
       child: Text(
         text,
-        style: const TextStyle(
-          color: AppColors.textMuted,
+        style: TextStyle(
+          color: style.sectionLabelColor,
           fontSize: 11,
           letterSpacing: 1.4,
           fontWeight: FontWeight.w900,
@@ -246,12 +263,14 @@ class _Item extends StatelessWidget {
     required this.current,
     required this.expanded,
     required this.onSelect,
+    required this.style,
   });
 
   final AppSection section;
   final AppSection current;
   final bool expanded;
   final ValueChanged<AppSection> onSelect;
+  final SidebarStyle style;
 
   @override
   Widget build(BuildContext context) {
@@ -277,12 +296,14 @@ class _Item extends StatelessWidget {
         margin: const EdgeInsets.symmetric(vertical: 4),
         decoration: BoxDecoration(
           color: active
-              ? AppColors.purpleBright.withValues(alpha: 0.16)
+              ? style.activeItemBackgroundColor.withValues(
+                  alpha: style.activeItemBackgroundOpacity,
+                )
               : Colors.transparent,
           borderRadius: BorderRadius.circular(14),
           border: active
-              ? const Border(
-                  left: BorderSide(color: AppColors.purpleGlow, width: 3),
+              ? Border(
+                  left: BorderSide(color: style.activeIndicatorColor, width: 3),
                 )
               : null,
         ),
@@ -294,7 +315,7 @@ class _Item extends StatelessWidget {
             width: 24,
             child: Icon(
               icon,
-              color: active ? AppColors.purpleGlow : AppColors.textMuted,
+              color: active ? style.accentColor : style.inactiveIconColor,
             ),
           ),
           title: expanded
@@ -302,8 +323,8 @@ class _Item extends StatelessWidget {
                   section.title,
                   style: TextStyle(
                     color: active
-                        ? AppColors.textPrimary
-                        : AppColors.textSecondary,
+                        ? style.activeTextColor
+                        : style.inactiveTextColor,
                     fontWeight: active ? FontWeight.w800 : FontWeight.w500,
                   ),
                 )
@@ -320,11 +341,13 @@ class _ConnectionsItem extends StatelessWidget {
     required this.current,
     required this.expanded,
     required this.onSelect,
+    required this.style,
   });
 
   final AppSection current;
   final bool expanded;
   final ValueChanged<AppSection> onSelect;
+  final SidebarStyle style;
 
   @override
   Widget build(BuildContext context) {
@@ -339,6 +362,7 @@ class _ConnectionsItem extends StatelessWidget {
         current: current,
         expanded: expanded,
         onSelect: onSelect,
+        style: style,
       );
     }
 
@@ -346,12 +370,14 @@ class _ConnectionsItem extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
         color: active
-            ? AppColors.purpleBright.withValues(alpha: 0.16)
+            ? style.activeItemBackgroundColor.withValues(
+                alpha: style.activeItemBackgroundOpacity,
+              )
             : Colors.transparent,
         borderRadius: BorderRadius.circular(14),
         border: active
-            ? const Border(
-                left: BorderSide(color: AppColors.purpleGlow, width: 3),
+            ? Border(
+                left: BorderSide(color: style.activeIndicatorColor, width: 3),
               )
             : null,
       ),
@@ -363,14 +389,14 @@ class _ConnectionsItem extends StatelessWidget {
           childrenPadding: const EdgeInsets.only(left: 18, right: 6, bottom: 6),
           leading: Icon(
             Icons.hub_rounded,
-            color: active ? AppColors.purpleGlow : AppColors.textMuted,
+            color: active ? style.accentColor : style.inactiveIconColor,
           ),
-          iconColor: AppColors.purpleGlow,
-          collapsedIconColor: AppColors.textMuted,
+          iconColor: style.accentColor,
+          collapsedIconColor: style.inactiveIconColor,
           title: Text(
             AppSection.connections.title,
             style: TextStyle(
-              color: active ? AppColors.textPrimary : AppColors.textSecondary,
+              color: active ? style.activeTextColor : style.inactiveTextColor,
               fontWeight: active ? FontWeight.w800 : FontWeight.w500,
             ),
           ),
@@ -380,18 +406,21 @@ class _ConnectionsItem extends StatelessWidget {
               current: current,
               expanded: expanded,
               onSelect: onSelect,
+              style: style,
             ),
             _Item(
               section: AppSection.httpSettings,
               current: current,
               expanded: expanded,
               onSelect: onSelect,
+              style: style,
             ),
             _Item(
               section: AppSection.otherProtocols,
               current: current,
               expanded: expanded,
               onSelect: onSelect,
+              style: style,
             ),
           ],
         ),

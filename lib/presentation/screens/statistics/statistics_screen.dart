@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../data/models/led_event_model.dart';
 import '../../widgets/common/glass_card.dart';
+import '../../widgets/common/nexus_visual_styles.dart';
 import '../../widgets/dashboard/stat_card.dart';
 
 class StatisticsScreen extends StatelessWidget {
@@ -36,6 +37,7 @@ class StatisticsScreen extends StatelessWidget {
                   title: 'Total eventos',
                   value: '${events.length}',
                   icon: Icons.timeline_rounded,
+                  cardStyle: const GlassCardStyle(),
                 ),
               ),
               SizedBox(
@@ -45,6 +47,14 @@ class StatisticsScreen extends StatelessWidget {
                   value: '${latencyMs}ms',
                   icon: Icons.speed_rounded,
                   color: AppColors.cyanGlow,
+                  cardStyle: const GlassCardStyle(
+                    backgroundColor: AppColors.cyanGlow,
+                    borderColor: AppColors.cyanGlow,
+                    shadowColor: AppColors.cyanGlow,
+                    backgroundOpacity: 0.06,
+                    borderOpacity: 0.2,
+                    shadowOpacity: 0.12,
+                  ),
                 ),
               ),
               SizedBox(
@@ -54,6 +64,14 @@ class StatisticsScreen extends StatelessWidget {
                   value: '$onCount',
                   icon: Icons.lightbulb_rounded,
                   color: AppColors.ledOn,
+                  cardStyle: const GlassCardStyle(
+                    backgroundColor: AppColors.ledOn,
+                    borderColor: AppColors.ledOn,
+                    shadowColor: AppColors.ledOn,
+                    backgroundOpacity: 0.06,
+                    borderOpacity: 0.2,
+                    shadowOpacity: 0.12,
+                  ),
                 ),
               ),
               SizedBox(
@@ -63,6 +81,14 @@ class StatisticsScreen extends StatelessWidget {
                   value: '$offCount',
                   icon: Icons.power_off_rounded,
                   color: AppColors.ledOff,
+                  cardStyle: const GlassCardStyle(
+                    backgroundColor: AppColors.ledOff,
+                    borderColor: AppColors.ledOff,
+                    shadowColor: AppColors.ledOff,
+                    backgroundOpacity: 0.06,
+                    borderOpacity: 0.2,
+                    shadowOpacity: 0.12,
+                  ),
                 ),
               ),
             ],
@@ -85,6 +111,8 @@ class StatisticsScreen extends StatelessWidget {
                         value: onCount,
                         total: events.length,
                         color: AppColors.ledOn,
+                        trackColor: AppColors.purpleMid,
+                        labelStyle: const TextStyle(fontWeight: FontWeight.w800),
                       ),
                     ),
                     const SizedBox(width: 14),
@@ -94,6 +122,8 @@ class StatisticsScreen extends StatelessWidget {
                         value: offCount,
                         total: events.length,
                         color: AppColors.ledOff,
+                        trackColor: AppColors.purpleMid,
+                        labelStyle: const TextStyle(fontWeight: FontWeight.w800),
                       ),
                     ),
                   ],
@@ -149,12 +179,16 @@ class _Bar extends StatelessWidget {
     required this.value,
     required this.total,
     required this.color,
+    required this.trackColor,
+    required this.labelStyle,
   });
 
   final String label;
   final int value;
   final int total;
   final Color color;
+  final Color trackColor;
+  final TextStyle labelStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -162,17 +196,14 @@ class _Bar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '$label · ${(percent * 100).round()}%',
-          style: const TextStyle(fontWeight: FontWeight.w800),
-        ),
+        Text('$label · ${(percent * 100).round()}%', style: labelStyle),
         const SizedBox(height: 8),
         ClipRRect(
           borderRadius: BorderRadius.circular(999),
           child: LinearProgressIndicator(
             value: percent,
             color: color,
-            backgroundColor: AppColors.purpleMid,
+            backgroundColor: trackColor,
             minHeight: 14,
           ),
         ),

@@ -4,7 +4,8 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../data/models/mqtt_config_model.dart';
 import '../../widgets/common/glass_card.dart';
-import '../../widgets/common/nexus_button.dart';
+
+import '../../widgets/common/nexus_visual_styles.dart';
 
 class LedControlScreen extends StatelessWidget {
   const LedControlScreen({
@@ -35,6 +36,14 @@ class LedControlScreen extends StatelessWidget {
       child: Column(
         children: [
           GlassCard(
+            style: GlassCardStyle(
+              backgroundColor: connected ? AppColors.ledOn : AppColors.ledOff,
+              borderColor: connected ? AppColors.ledOn : AppColors.ledOff,
+              shadowColor: connected ? AppColors.ledOn : AppColors.ledOff,
+              backgroundOpacity: 0.06,
+              borderOpacity: 0.32,
+              shadowOpacity: 0.18,
+            ),
             child: Row(
               children: [
                 Icon(
@@ -201,10 +210,7 @@ class _ColorControlRow extends StatelessWidget {
         Expanded(
           child: Text(
             label,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
-            ),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
           ),
         ),
         const SizedBox(width: 8),

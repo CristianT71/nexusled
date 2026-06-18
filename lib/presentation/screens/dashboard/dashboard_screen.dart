@@ -111,6 +111,36 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
                     DateTime.now().difference(widget.stateSince),
                   ),
                   accent: _getColorValue(widget.ledColor),
+                  panelDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(22),
+                    gradient: LinearGradient(
+                      colors: [
+                        _getColorValue(widget.ledColor).withValues(alpha: 0.28),
+                        AppColors.bgSecondary.withValues(alpha: 0.88),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(
+                      color: _getColorValue(widget.ledColor).withValues(alpha: 0.3),
+                    ),
+                  ),
+                  iconDecoration: BoxDecoration(
+                    color: _getColorValue(widget.ledColor).withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  titleStyle: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                  valueStyle: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                  ),
+                  subtitleStyle: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                  ),
                 ),
                 _CarouselPanel(
                   icon: Icons.speed_rounded,
@@ -122,6 +152,45 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
                   accent: widget.latencyMs < 100
                       ? AppColors.ledOn
                       : AppColors.ledConnecting,
+                  panelDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(22),
+                    gradient: LinearGradient(
+                      colors: [
+                        (widget.latencyMs < 100
+                                ? AppColors.ledOn
+                                : AppColors.ledConnecting)
+                            .withValues(alpha: 0.28),
+                        AppColors.bgSecondary.withValues(alpha: 0.88),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(
+                      color: (widget.latencyMs < 100
+                              ? AppColors.ledOn
+                              : AppColors.ledConnecting)
+                          .withValues(alpha: 0.3),
+                    ),
+                  ),
+                  iconDecoration: BoxDecoration(
+                    color: (widget.latencyMs < 100
+                            ? AppColors.ledOn
+                            : AppColors.ledConnecting)
+                        .withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  titleStyle: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                  valueStyle: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                  ),
+                  subtitleStyle: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                  ),
                 ),
                 _CarouselPanel(
                   icon: Icons.receipt_long_rounded,
@@ -131,6 +200,36 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
                       ? 'Todavía no hay registros en la sesión actual.'
                       : 'Último cambio: ${widget.events.first.newState}',
                   accent: AppColors.cyanGlow,
+                  panelDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(22),
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.cyanGlow.withValues(alpha: 0.28),
+                        AppColors.bgSecondary.withValues(alpha: 0.88),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(
+                      color: AppColors.cyanGlow.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  iconDecoration: BoxDecoration(
+                    color: AppColors.cyanGlow.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  titleStyle: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                  valueStyle: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                  ),
+                  subtitleStyle: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                  ),
                 ),
                 _CarouselPanel(
                   icon: Icons.access_time_rounded,
@@ -142,6 +241,36 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
                       ? 'El LED lleva encendido este tiempo.'
                       : 'El LED permanece apagado desde entonces.',
                   accent: AppColors.blueElectric,
+                  panelDecoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(22),
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.blueElectric.withValues(alpha: 0.28),
+                        AppColors.bgSecondary.withValues(alpha: 0.88),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(
+                      color: AppColors.blueElectric.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  iconDecoration: BoxDecoration(
+                    color: AppColors.blueElectric.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  titleStyle: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                  valueStyle: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                  ),
+                  subtitleStyle: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),
@@ -151,21 +280,40 @@ class _DashboardCarouselState extends State<DashboardCarousel> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(_pagesCount, (index) {
               final active = index == _pageIndex;
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                height: 8,
-                width: active ? 22 : 8,
-                decoration: BoxDecoration(
-                  color: active
-                      ? AppColors.brightBlue
-                      : AppColors.textSecondary.withValues(alpha: 0.35),
-                  borderRadius: BorderRadius.circular(99),
-                ),
+              return _CarouselIndicatorDot(
+                active: active,
+                activeColor: AppColors.brightBlue,
+                inactiveColor: AppColors.textSecondary.withValues(alpha: 0.35),
               );
             }),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _CarouselIndicatorDot extends StatelessWidget {
+  const _CarouselIndicatorDot({
+    required this.active,
+    required this.activeColor,
+    required this.inactiveColor,
+  });
+
+  final bool active;
+  final Color activeColor;
+  final Color inactiveColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
+      height: 8,
+      width: active ? 22 : 8,
+      decoration: BoxDecoration(
+        color: active ? activeColor : inactiveColor,
+        borderRadius: BorderRadius.circular(99),
       ),
     );
   }
@@ -178,6 +326,11 @@ class _CarouselPanel extends StatelessWidget {
     required this.value,
     required this.subtitle,
     required this.accent,
+    required this.panelDecoration,
+    required this.iconDecoration,
+    required this.titleStyle,
+    required this.valueStyle,
+    required this.subtitleStyle,
   });
 
   final IconData icon;
@@ -185,34 +338,25 @@ class _CarouselPanel extends StatelessWidget {
   final String value;
   final String subtitle;
   final Color accent;
+  final BoxDecoration panelDecoration;
+  final BoxDecoration iconDecoration;
+  final TextStyle titleStyle;
+  final TextStyle valueStyle;
+  final TextStyle subtitleStyle;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(right: 8),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(22),
-        gradient: LinearGradient(
-          colors: [
-            accent.withValues(alpha: 0.28),
-            AppColors.bgSecondary.withValues(alpha: 0.88),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        border: Border.all(color: accent.withValues(alpha: 0.3)),
-      ),
+      decoration: panelDecoration,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
             height: 48,
             width: 48,
-            decoration: BoxDecoration(
-              color: accent.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(16),
-            ),
+            decoration: iconDecoration,
             child: Icon(icon, color: accent, size: 24),
           ),
           const SizedBox(width: 12),
@@ -221,30 +365,15 @@ class _CarouselPanel extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
-                  ),
-                ),
+                Text(title, style: titleStyle),
                 const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
+                Text(value, style: valueStyle),
                 const SizedBox(height: 4),
                 Text(
                   subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 11,
-                  ),
+                  style: subtitleStyle,
                 ),
               ],
             ),
@@ -803,48 +932,61 @@ class DashboardScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildBox(
-            'Latencia (ms)',
-            stats['min']!,
-            stats['q1']!,
-            stats['median']!,
-            stats['q3']!,
-            stats['max']!,
+            label: 'Latencia (ms)',
+            min: stats['min']!,
+            q1: stats['q1']!,
+            median: stats['median']!,
+            q3: stats['q3']!,
+            max: stats['max']!,
+            whiskerColor: AppColors.textSecondary,
+            boxBorderColor: AppColors.brightBlue,
+            medianColor: AppColors.ledOn,
+            labelStyle: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+            ),
+            detailStyle: const TextStyle(
+              fontSize: 10,
+              color: AppColors.textSecondary,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBox(
-    String label,
-    double min,
-    double q1,
-    double median,
-    double q3,
-    double max,
-  ) {
+  Widget _buildBox({
+    required String label,
+    required double min,
+    required double q1,
+    required double median,
+    required double q3,
+    required double max,
+    required Color whiskerColor,
+    required Color boxBorderColor,
+    required Color medianColor,
+    required TextStyle labelStyle,
+    required TextStyle detailStyle,
+  }) {
     final scale = 200.0 / max;
     return Column(
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 12),
-        ),
+        Text(label, style: labelStyle),
         const SizedBox(height: 8),
         Row(
           children: [
             // Línea de min
-            Container(height: 2, width: 20, color: AppColors.textSecondary),
+            Container(height: 2, width: 20, color: whiskerColor),
             const SizedBox(width: 2),
             // Bigote
-            Container(height: 40, width: 2, color: AppColors.textSecondary),
+            Container(height: 40, width: 2, color: whiskerColor),
             const SizedBox(width: 2),
             // Caja
             Container(
               width: ((q3 - q1) * scale).clamp(40, double.infinity),
               height: 40,
               decoration: BoxDecoration(
-                border: Border.all(color: AppColors.brightBlue, width: 2),
+                border: Border.all(color: boxBorderColor, width: 2),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Stack(
@@ -855,7 +997,7 @@ class DashboardScreen extends StatelessWidget {
                     child: Container(
                       width: 2,
                       height: 40,
-                      color: AppColors.ledOn,
+                      color: medianColor,
                     ),
                   ),
                 ],
@@ -863,16 +1005,16 @@ class DashboardScreen extends StatelessWidget {
             ),
             const SizedBox(width: 2),
             // Bigote
-            Container(height: 40, width: 2, color: AppColors.textSecondary),
+            Container(height: 40, width: 2, color: whiskerColor),
             const SizedBox(width: 2),
             // Línea de max
-            Container(height: 2, width: 20, color: AppColors.textSecondary),
+            Container(height: 2, width: 20, color: whiskerColor),
           ],
         ),
         const SizedBox(height: 8),
         Text(
           'Min: ${min.toStringAsFixed(0)}, Q1: ${q1.toStringAsFixed(0)}, Med: ${median.toStringAsFixed(0)}, Q3: ${q3.toStringAsFixed(0)}, Max: ${max.toStringAsFixed(0)}',
-          style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+          style: detailStyle,
         ),
       ],
     );

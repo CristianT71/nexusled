@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import '../../../core/constants/app_colors.dart';
 import '../../widgets/common/glass_card.dart';
 import '../../widgets/common/nexus_button.dart';
+import '../../widgets/common/nexus_visual_styles.dart';
 
 class HttpSettingsScreen extends StatefulWidget {
   const HttpSettingsScreen({super.key});
@@ -111,11 +112,22 @@ class _HttpSettingsScreenState extends State<HttpSettingsScreen> {
                   label: _loading ? 'PROBANDO...' : 'PROBAR HTTP',
                   onPressed: _loading ? null : _testHttpConnection,
                   icon: Icons.http_rounded,
+                  style: const NexusButtonStyle(
+                    gradientColors: [Color(0xFF0F766E), Color(0xFF155E75)],
+                    borderColor: Color(0xFF67E8F9),
+                    borderWidth: 1,
+                    shadowOpacity: 0.22,
+                  ),
                 ),
                 NexusButton(
                   label: 'GUARDAR HTTP',
                   onPressed: _save,
                   icon: Icons.save_rounded,
+                  style: const NexusButtonStyle(
+                    gradientColors: [AppColors.purpleAccent, AppColors.purpleBright],
+                    borderColor: Color(0xFF93C5FD),
+                    borderWidth: 1,
+                  ),
                 ),
               ],
             ),

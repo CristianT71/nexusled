@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'common/glass_card.dart';
 import 'common/nexus_button.dart';
+import 'common/nexus_visual_styles.dart';
 import '../../core/constants/app_colors.dart';
 
 class MqttConnectionTestDialog extends StatefulWidget {
@@ -87,6 +88,12 @@ class _MqttConnectionTestDialogState extends State<MqttConnectionTestDialog> {
           label: 'CERRAR',
           onPressed: () => Navigator.pop(context),
           icon: Icons.close_rounded,
+          style: const NexusButtonStyle(
+            gradientColors: [Color(0xFF475569), Color(0xFF334155)],
+            borderColor: Color(0xFF64748B),
+            borderWidth: 1,
+            shadowOpacity: 0.18,
+          ),
         ),
       ],
     );
@@ -96,7 +103,14 @@ class _MqttConnectionTestDialogState extends State<MqttConnectionTestDialog> {
     final success = _result!['success'] == true;
     final details = _result!['details'] as Map<String, dynamic>;
 
+    final accentColor = success ? AppColors.ledOn : AppColors.ledOff;
+
     return GlassCard(
+      style: GlassCardStyle(
+        backgroundColor: accentColor,
+        borderColor: accentColor,
+        shadowColor: accentColor,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

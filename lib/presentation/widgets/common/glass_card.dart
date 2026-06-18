@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/app_colors.dart';
+import 'nexus_visual_styles.dart';
 
 class GlassCard extends StatelessWidget {
   const GlassCard({
@@ -10,31 +10,38 @@ class GlassCard extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.all(20),
     this.onTap,
+    this.style = const GlassCardStyle(),
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
   final VoidCallback? onTap;
+  final GlassCardStyle style;
 
   @override
   Widget build(BuildContext context) {
+    final radius = BorderRadius.circular(style.borderRadius);
     final content = ClipRRect(
-      borderRadius: BorderRadius.circular(24),
+      borderRadius: radius,
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        filter: ImageFilter.blur(
+          sigmaX: style.blurSigmaX,
+          sigmaY: style.blurSigmaY,
+        ),
         child: Container(
           padding: padding,
           decoration: BoxDecoration(
-            color: AppColors.purpleBright.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(24),
+            color: style.backgroundColor.withValues(alpha: style.backgroundOpacity),
+            borderRadius: radius,
             border: Border.all(
-              color: AppColors.colorTarjetaAbout.withValues(alpha: 0.25),
+              color: style.borderColor.withValues(alpha: style.borderOpacity),
+              width: style.borderWidth,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.purpleBright.withValues(alpha: 0.14),
-                blurRadius: 26,
-                offset: const Offset(0, 10),
+                color: style.shadowColor.withValues(alpha: style.shadowOpacity),
+                blurRadius: style.shadowBlurRadius,
+                offset: style.shadowOffset,
               ),
             ],
           ),
@@ -44,10 +51,6 @@ class GlassCard extends StatelessWidget {
     );
 
     if (onTap == null) return content;
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(24),
-      child: content,
-    );
+    return InkWell(onTap: onTap, borderRadius: radius, child: content);
   }
 }

@@ -4,6 +4,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../data/models/mqtt_config_model.dart';
 import '../../widgets/common/glass_card.dart';
 import '../../widgets/common/nexus_button.dart';
+import '../../widgets/common/nexus_visual_styles.dart';
 import '../../widgets/mqtt_connection_test_dialog.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -210,11 +211,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     );
                   },
                   icon: Icons.wifi_tethering_rounded,
+                  style: const NexusButtonStyle(
+                    gradientColors: [Color(0xFF0F766E), Color(0xFF155E75)],
+                    borderColor: Color(0xFF67E8F9),
+                    borderWidth: 1,
+                    shadowOpacity: 0.22,
+                  ),
                 ),
                 NexusButton(
                   label: 'GUARDAR CONFIGURACIÓN',
                   onPressed: _save,
                   icon: Icons.save_rounded,
+                  style: const NexusButtonStyle(
+                    gradientColors: [AppColors.purpleAccent, AppColors.purpleBright],
+                    borderColor: Color(0xFF93C5FD),
+                    borderWidth: 1,
+                  ),
                 ),
               ],
             ),

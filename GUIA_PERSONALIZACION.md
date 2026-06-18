@@ -1,233 +1,624 @@
-# Guía de Personalización - NexusLED
+# Guía rápida de personalización - NexusLED
 
-Este documento explica dónde están definidos los colores, tamaños, textos y propiedades principales de la aplicación para facilitar cambios rápidos.
-
-## 🎨 Colores
-
-**Archivo:** `lib/core/constants/app_colors.dart`
-
-Todos los colores de la aplicación están centralizados en la clase `AppColors`. Para cambiar el esquema de colores, modifica estos valores:
-
-### Colores de fondo
-- `bgPrimary` - Fondo principal (muy oscuro)
-- `bgSecondary` - Fondo secundario (tarjetas, paneles)
-- `deepBlue` - Azul profundo técnico
-- `accentBlue` - Azul medio técnico
-- `brightBlue` - Azul eléctrico
-- `neonBlue` - Cian neón
-- `accentGlow` - Brillo azul cielo
-
-### Colores de texto
-- `textPrimary` - Texto principal (blanco azulado)
-- `textSecondary` - Texto secundario (gris azulado)
-- `textMuted` - Texto deshabilitado (gris azulado)
-
-### Indicadores de estado LED
-- `ledOn` - LED encendido (verde esmeralda)
-- `ledOff` - LED apagado (rojo)
-- `ledConnecting` - LED conectando (ámbar)
-- `ledUnknown` - LED desconocido (gris)
-
-### Alias de compatibilidad
-- `purpleDeep` → `deepBlue`
-- `purpleMid` → `accentBlue`
-- `purpleAccent` → `brightBlue`
-- `purpleBright` → `neonBlue`
-- `purpleGlow` → `accentGlow`
-
-**Ejemplo de cambio:**
-```dart
-// Cambiar el color de fondo principal
-static const bgPrimary = Color(0xFF000000); // Negro puro
-```
+Esta guía está hecha para cambiar el diseño **sin dañar otras partes**.
 
 ---
 
-## 🎨 Tema Global
+# 1. Regla principal
 
-**Archivo:** `lib/core/theme/app_theme.dart`
+## Si quieres cambiar solo 1 cosa
+Toca **la instancia específica** en la pantalla.
 
-El tema global de la aplicación se define en `AppTheme.dark()`. Aquí se configuran:
+## Si quieres cambiar muchas cosas a la vez
+Toca el archivo base o las constantes globales.
 
-- `brightness` - Modo claro/oscuro
-- `scaffoldBackgroundColor` - Color de fondo de Scaffold
-- `colorScheme` - Esquema de colores de Material 3
-- `fontFamily` - Fuente de texto
-- `useMaterial3` - Uso de Material Design 3
-- `inputDecorationTheme` - Estilo de campos de entrada
+---
 
-**Ejemplo de cambio:**
+# 2. Regla más importante del proyecto
+
+## No cambies esto si solo quieres modificar un elemento puntual
+
+- `lib/presentation/widgets/common/glass_card.dart`
+- `lib/presentation/widgets/common/nexus_button.dart`
+
+Porque esos archivos son la base reutilizable.
+
+Si cambias ahí:
+- muchas tarjetas cambian
+- muchos botones cambian
+
+## Sí cambia esto si quieres modificar solo un elemento
+
+La pantalla donde está ese elemento.
+
+Ejemplos:
+- `lib/presentation/screens/about/about_screen.dart`
+- `lib/presentation/screens/services/services_screen.dart`
+- `lib/presentation/screens/profile/profile_screen.dart`
+- `lib/presentation/screens/system_info/system_info_screen.dart`
+
+---
+
+# 3. Dónde se cambia cada cosa
+
+## A. Color global de la app
+Archivo:
+
+- `lib/core/constants/app_colors.dart`
+
+Ahí están colores como:
+- `bgPrimary`
+- `bgSecondary`
+- `textPrimary`
+- `textSecondary`
+- `ledOn`
+- `ledOff`
+- `accentGlow`
+
+Ejemplo:
+
 ```dart
-// Cambiar la fuente
+static const bgPrimary = Color(0xFF000000);
+```
+
+Usa esto solo si quieres que el cambio se vea en muchas partes.
+
+---
+
+## B. Tema global de inputs y app
+Archivo:
+
+- `lib/core/theme/app_theme.dart`
+
+Ahí puedes cambiar:
+- fondo general
+- fuente
+- estilo de `TextField`
+- bordes globales de inputs
+
+Ejemplo:
+
+```dart
 fontFamily: 'Roboto',
-
-// Cambiar el color de fondo
-scaffoldBackgroundColor: AppColors.bgSecondary,
 ```
 
 ---
 
-## 📝 Textos Constantes
+## C. Tarjetas individuales
+Normalmente se cambian en la pantalla donde aparecen.
 
-**Archivo:** `lib/core/constants/app_strings.dart`
+Las tarjetas usan:
 
-Textos que se usan en múltiples lugares de la aplicación:
+- `GlassCard`
+- `GlassCardStyle`
 
-- `appName` - Nombre de la aplicación
-- `tagline` - Eslogan
-- `defaultBroker` - Broker MQTT por defecto
-- `defaultControlTopic` - Tópico de control por defecto
-- `defaultStatusTopic` - Tópico de estado por defecto
+Ejemplo base:
 
-**Ejemplo de cambio:**
 ```dart
-static const appName = 'Mi App LED';
-```
-
----
-
-## 📐 Tamaños y Propiedades en Pantallas
-
-Las pantallas individuales tienen sus propios tamaños y propiedades. La estructura es:
-
-```
-lib/presentation/screens/
-├── about/
-│   └── about_screen.dart
-├── auth/
-│   ├── login_screen.dart
-│   └── register_screen.dart
-├── control/
-│   └── control_screen.dart
-├── dashboard/
-│   └── dashboard_screen.dart
-├── profile/
-│   └── profile_screen.dart
-├── statistics/
-│   └── statistics_screen.dart
-└── system_info/
-    └── system_info_screen.dart
-```
-
-### Ejemplos de cambios comunes:
-
-#### Cambiar tamaño de un elemento
-```dart
-// En cualquier pantalla
-SizedBox(
-  height: 200, // Cambia este valor
-  child: Widget(),
+GlassCard(
+  style: const GlassCardStyle(
+    backgroundColor: AppColors.cyanGlow,
+    backgroundOpacity: 0.08,
+    borderColor: AppColors.cyanGlow,
+    borderOpacity: 0.28,
+    shadowColor: AppColors.cyanGlow,
+    shadowOpacity: 0.18,
+    borderRadius: 24,
+  ),
+  child: ...
 )
 ```
 
-#### Cambiar tamaño de texto
+### Qué cambia aquí
+- `backgroundColor` = color base
+- `backgroundOpacity` = transparencia del fondo
+- `borderColor` = color del borde
+- `borderOpacity` = transparencia del borde
+- `borderWidth` = grosor del borde
+- `shadowColor` = color de la sombra
+- `shadowOpacity` = transparencia de la sombra
+- `shadowBlurRadius` = fuerza de la sombra
+- `borderRadius` = redondeado
+- `blurSigmaX`, `blurSigmaY` = desenfoque del efecto glass
+
+---
+
+## D. Botones individuales
+Los botones usan:
+
+- `NexusButton`
+- `NexusButtonStyle`
+
+Ejemplo:
+
 ```dart
-Text(
-  'Hola',
-  style: TextStyle(
-    fontSize: 24, // Cambia este valor
-    fontWeight: FontWeight.bold,
+NexusButton(
+  label: 'GUARDAR',
+  onPressed: _save,
+  icon: Icons.save_rounded,
+  style: const NexusButtonStyle(
+    gradientColors: [AppColors.purpleAccent, AppColors.purpleBright],
+    borderColor: Color(0xFF93C5FD),
+    borderWidth: 1,
+    borderRadius: 14,
   ),
 )
 ```
 
-#### Cambiar espaciado
-```dart
-const SizedBox(height: 16), // Cambia este valor
-```
-
-#### Cambiar bordes redondeados
-```dart
-BorderRadius.circular(12), // Cambia este valor
-```
+### Qué cambia aquí
+- `gradientColors` = colores del botón
+- `foregroundColor` = color del texto e ícono
+- `borderColor` = color del borde
+- `borderWidth` = grosor del borde
+- `borderRadius` = redondeado
+- `padding` = tamaño interior del botón
+- `shadowColor` = color de sombra
+- `shadowOpacity` = transparencia de sombra
+- `shadowBlurRadius` = intensidad de sombra
+- `textStyle` = estilo del texto
 
 ---
 
-## 🧩 Componentes Reutilizables
+## E. Texto
+El texto se cambia directamente en el widget `Text`.
 
-**Directorio:** `lib/presentation/widgets/
+Ejemplo:
 
-Componentes que se usan en múltiples pantallas:
-
-- `sidebar/` - Barra lateral de navegación
-- `common/` - Componentes comunes (tarjetas, botones, etc.)
-- `led/` - Componentes específicos de LED
-
-### Ejemplo: Cambiar tamaño de avatar en sidebar
-**Archivo:** `lib/presentation/widgets/sidebar/sidebar_widget.dart`
-
-Busca la sección del avatar y modifica:
 ```dart
-CircleAvatar(
-  radius: 24, // Cambia este valor
-  ...
+Text(
+  'Hola',
+  style: const TextStyle(
+    color: Colors.red,
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+  ),
+)
+```
+
+### Lo más usado
+- `color`
+- `fontSize`
+- `fontWeight`
+- `height`
+- `letterSpacing`
+
+---
+
+## F. Imágenes
+Las imágenes se cambian donde aparece `Image.asset`, `Image.network` o un widget similar.
+
+Ejemplo:
+
+```dart
+Image.asset(
+  'assets/Images/Grupo_NexusLed.png',
+  width: 700,
+  height: 500,
+  fit: BoxFit.cover,
+)
+```
+
+### Lo más usado
+- `width`
+- `height`
+- `fit`
+
+Si la imagen está dentro de un `ClipRRect`, también puedes cambiar sus esquinas:
+
+```dart
+ClipRRect(
+  borderRadius: BorderRadius.circular(16),
+  child: Image.asset(...),
 )
 ```
 
 ---
 
-## 📱 Estructura del Proyecto
+# 4. Tamaño: cómo se cambia de verdad
 
+## El style cambia cómo se ve
+Ejemplo:
+- color
+- borde
+- sombra
+- opacidad
+
+## El tamaño se cambia con layout
+Ejemplo:
+- `padding`
+- `SizedBox`
+- `Container`
+- `ConstrainedBox`
+- `width`
+- `height`
+
+---
+
+## Ejemplo: hacer más grande una tarjeta
+
+```dart
+SizedBox(
+  width: 700,
+  child: GlassCard(
+    padding: const EdgeInsets.all(28),
+    style: const GlassCardStyle(
+      backgroundColor: AppColors.cyanGlow,
+      borderColor: AppColors.cyanGlow,
+      shadowColor: AppColors.cyanGlow,
+    ),
+    child: ...
+  ),
+)
 ```
-lib/
-├── core/
-│   ├── constants/
-│   │   ├── app_colors.dart      # Colores
-│   │   └── app_strings.dart    # Textos constantes
-│   └── theme/
-│       └── app_theme.dart      # Tema global
-├── data/
-│   ├── models/                 # Modelos de datos
-│   └── services/              # Servicios (MQTT, Supabase, etc.)
-├── presentation/
-│   ├── screens/               # Pantallas
-│   ├── state/                 # Estado de la aplicación
-│   └── widgets/               # Componentes reutilizables
-└── main.dart                  # Punto de entrada
+
+### Aquí:
+- `width: 700` = tamaño externo
+- `padding: EdgeInsets.all(28)` = tamaño interno
+- `style` = apariencia
+
+---
+
+## Ejemplo: hacer más grande un botón
+
+```dart
+NexusButton(
+  label: 'PROBAR',
+  onPressed: _test,
+  style: const NexusButtonStyle(
+    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 22),
+    borderRadius: 18,
+  ),
+)
 ```
 
 ---
 
-## 🔄 Cambios Rápidos Más Comunes
+# 5. Ejemplo real: cambiar solo la tarjeta "Acerca de Este Proyecto"
 
-### Cambiar el color de fondo de toda la app
-1. Ve a `lib/core/constants/app_colors.dart`
-2. Modifica `bgPrimary`
+Archivo:
 
-### Cambiar el color de los botones de LED
-1. Ve a `lib/core/constants/app_colors.dart`
-2. Modifica `ledOn` y `ledOff`
+- `lib/presentation/screens/about/about_screen.dart`
 
-### Cambiar el nombre de la app
-1. Ve a `lib/core/constants/app_strings.dart`
-2. Modifica `appName`
+Busca esta parte:
 
-### Cambiar la fuente de toda la app
-1. Ve a `lib/core/theme/app_theme.dart`
-2. Modifica `fontFamily`
+```dart
+GlassCard(
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        'Acerca de Este Proyecto',
+```
 
-### Cambiar el tamaño de los gráficos
-1. Ve a `lib/presentation/screens/dashboard/dashboard_screen.dart`
-2. Busca `SizedBox(height: 280)` en el gráfico y modifica el valor
+Si quieres cambiar solo esa tarjeta, haz esto:
 
-### Cambiar el tamaño de los botones
-1. Ve a la pantalla específica (ej. `control_screen.dart`)
-2. Busca los botones y modifica sus `SizedBox` o `Container`
+```dart
+GlassCard(
+  style: const GlassCardStyle(
+    backgroundColor: AppColors.cyanGlow,
+    backgroundOpacity: 0.08,
+    borderColor: AppColors.cyanGlow,
+    borderOpacity: 0.28,
+    shadowColor: AppColors.cyanGlow,
+    shadowOpacity: 0.18,
+    borderRadius: 24,
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        'Acerca de Este Proyecto',
+```
+
+## Eso solo cambia esa tarjeta
+No cambia:
+- la primera card de About
+- la card de tecnologías
+- otras pantallas
 
 ---
 
-## ⚠️ Notas Importantes
+# 6. Ejemplo real: cambiar el tamaño de la imagen de About
 
-- Los cambios en `app_colors.dart` afectan a toda la aplicación
-- Los cambios en `app_theme.dart` afectan a componentes de Material Design
-- Los cambios en pantallas individuales solo afectan a esa pantalla
-- Siempre prueba los cambios en múltiples pantallas para verificar consistencia
-- Los colores están en formato hexadecimal `0xFFRRGGBB`
+Archivo:
+
+- `lib/presentation/screens/about/about_screen.dart`
+
+Busca esto:
+
+```dart
+Image.asset(
+  'assets/Images/Grupo_NexusLed.png',
+  width: kIsWeb ? 700 : double.infinity,
+  height: kIsWeb ? 500 : null,
+  fit: BoxFit.cover,
+)
+```
+
+Puedes cambiarlo por ejemplo a:
+
+```dart
+Image.asset(
+  'assets/Images/Grupo_NexusLed.png',
+  width: kIsWeb ? 850 : double.infinity,
+  height: kIsWeb ? 550 : null,
+  fit: BoxFit.cover,
+)
+```
 
 ---
 
-## 🛠️ Herramientas Útiles
+# 7. Ejemplo real: cambiar solo un botón
 
-- **Selector de colores:** Usa herramientas como [ColorHex](https://colorhexa.com/) para obtener valores hexadecimales
-- **Material Design:** Consulta [Material Design 3](https://m3.material.io/) para guías de diseño
-- **Flutter docs:** [Flutter Documentation](https://docs.flutter.dev/) para referencia de widgets
+## Botón normal
+Archivo:
+
+- `lib/presentation/screens/auth/login_screen.dart`
+
+Busca:
+
+```dart
+NexusButton(
+  label: widget.loading ? 'CONECTANDO...' : 'INICIAR SESIÓN',
+```
+
+Si quieres cambiar solo ese botón:
+
+```dart
+NexusButton(
+  label: widget.loading ? 'CONECTANDO...' : 'INICIAR SESIÓN',
+  onPressed: ...,
+  icon: Icons.login_rounded,
+  style: const NexusButtonStyle(
+    gradientColors: [Color(0xFF2563EB), Color(0xFF0EA5E9)],
+    borderColor: Color(0xFF93C5FD),
+    borderWidth: 1,
+    borderRadius: 16,
+  ),
+)
+```
+
+---
+
+## Botón destructivo
+Ejemplo ya existente:
+
+Archivo:
+
+- `lib/presentation/screens/profile/profile_screen.dart`
+
+Busca:
+
+```dart
+NexusButton(
+  label: 'CERRAR SESIÓN',
+```
+
+Ese ya tiene estilo propio, por eso no afecta a otros botones.
+
+---
+
+# 8. Ejemplo real: tarjetas con color por estado
+
+Archivo:
+
+- `lib/presentation/screens/system_info/system_info_screen.dart`
+
+Ejemplo que ya existe:
+
+```dart
+cardStyle: GlassCardStyle(
+  backgroundColor: connected ? AppColors.ledOn : AppColors.ledOff,
+  borderColor: connected ? AppColors.ledOn : AppColors.ledOff,
+  shadowColor: connected ? AppColors.ledOn : AppColors.ledOff,
+  backgroundOpacity: 0.05,
+  borderOpacity: 0.24,
+  shadowOpacity: 0.16,
+),
+```
+
+Eso significa:
+- si está conectado, la tarjeta toma un color
+- si está desconectado, toma otro
+- sin afectar otras tarjetas
+
+---
+
+# 9. Ejemplo real: estilos repetidos pero controlados
+
+## Services
+Archivo:
+
+- `lib/presentation/screens/services/services_screen.dart`
+
+Ahí existe un estilo repetido controlado:
+
+```dart
+const defaultCardStyle = GlassCardStyle();
+```
+
+y cada servicio usa propiedades separadas como:
+- `accentColor`
+- `cardStyle`
+- `titleStyle`
+- `descriptionStyle`
+
+Eso permite que cada tarjeta de servicio pueda personalizarse sin tocar las demás.
+
+---
+
+## About - badges y feature items
+Archivo:
+
+- `lib/presentation/screens/about/about_screen.dart`
+
+Ahí existen estilos reutilizables:
+
+```dart
+const featureStyle = NexusInfoTileStyle();
+const badgeStyle = NexusBadgeStyle();
+```
+
+Eso sirve para:
+- cambiar varias badges iguales a la vez
+- cambiar varias filas informativas iguales a la vez
+
+Si quieres cambiar solo una badge, debes tocar esa instancia concreta.
+
+---
+
+# 10. Elementos pequeños parametrizados
+
+## Chips del perfil
+Archivo:
+
+- `lib/presentation/screens/profile/profile_screen.dart`
+
+El widget `_ProfileChip` ya acepta:
+
+- `backgroundColor`
+- `backgroundOpacity`
+- `borderColor`
+- `borderOpacity`
+- `iconColor`
+- `textStyle`
+- `padding`
+
+## Tarjetas pequeñas del perfil
+Archivo:
+
+- `lib/presentation/screens/profile/profile_screen.dart`
+
+El widget `_ProfileInfoCard` ya acepta:
+
+- `backgroundColor`
+- `backgroundOpacity`
+- `borderColor`
+- `borderOpacity`
+- `iconColor`
+- `titleStyle`
+- `valueStyle`
+- `padding`
+
+---
+
+# 11. Casos rápidos
+
+## Quiero cambiar solo el color de una tarjeta
+Toca la instancia del `GlassCard` en esa pantalla.
+
+## Quiero cambiar solo el color de un botón
+Toca ese `NexusButton` y agrega o cambia `style: NexusButtonStyle(...)`.
+
+## Quiero cambiar solo el tamaño de una imagen
+Cambia `width`, `height` o `fit` en `Image.asset` o `Image.network`.
+
+## Quiero cambiar solo el texto
+Cambia el `TextStyle` de ese `Text`.
+
+## Quiero cambiar varios inputs de toda la app
+Toca `lib/core/theme/app_theme.dart`.
+
+## Quiero cambiar varios colores de toda la app
+Toca `lib/core/constants/app_colors.dart`.
+
+---
+
+# 12. Qué archivo tocar según lo que quieres cambiar
+
+## Global
+- `lib/core/constants/app_colors.dart`
+- `lib/core/theme/app_theme.dart`
+
+## Tarjetas y botones base
+- `lib/presentation/widgets/common/glass_card.dart`
+- `lib/presentation/widgets/common/nexus_button.dart`
+- `lib/presentation/widgets/common/nexus_visual_styles.dart`
+
+## Pantallas
+- `lib/presentation/screens/about/about_screen.dart`
+- `lib/presentation/screens/services/services_screen.dart`
+- `lib/presentation/screens/profile/profile_screen.dart`
+- `lib/presentation/screens/system_info/system_info_screen.dart`
+- `lib/presentation/screens/settings/settings_screen.dart`
+- `lib/presentation/screens/settings/http_settings_screen.dart`
+- `lib/presentation/screens/settings/other_protocols_screen.dart`
+- `lib/presentation/screens/support/support_screen.dart`
+- `lib/presentation/screens/splash_screen.dart`
+
+---
+
+# 13. Regla final para no romper nada
+
+## Si quieres cambiar solo un elemento
+No cambies el widget base.
+
+## Si quieres cambiar una familia completa de elementos
+Sí puedes cambiar:
+- `AppColors`
+- `AppTheme`
+- estilos comunes en `nexus_visual_styles.dart`
+
+---
+
+# 14. Resumen ultra corto
+
+- `style` = cómo se ve
+- `padding / width / height / SizedBox / Container` = cuánto mide
+- cambiar una instancia = cambio local
+- cambiar un archivo base = cambio global
+
+---
+
+# 15. Ejemplo mínimo para recordar
+
+## Tarjeta local
+
+```dart
+GlassCard(
+  style: const GlassCardStyle(
+    backgroundColor: AppColors.cyanGlow,
+    borderColor: AppColors.cyanGlow,
+    shadowColor: AppColors.cyanGlow,
+  ),
+  child: ...
+)
+```
+
+## Botón local
+
+```dart
+NexusButton(
+  label: 'GUARDAR',
+  onPressed: _save,
+  style: const NexusButtonStyle(
+    gradientColors: [AppColors.purpleAccent, AppColors.purpleBright],
+    borderColor: Color(0xFF93C5FD),
+    borderWidth: 1,
+  ),
+)
+```
+
+## Imagen
+
+```dart
+Image.asset(
+  'assets/Images/Grupo_NexusLed.png',
+  width: 800,
+  height: 500,
+  fit: BoxFit.cover,
+)
+```
+
+## Texto
+
+```dart
+Text(
+  'Título',
+  style: const TextStyle(
+    color: Colors.white,
+    fontSize: 24,
+    fontWeight: FontWeight.w700,
+  ),
+)
+```

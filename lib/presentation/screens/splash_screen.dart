@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_strings.dart';
 import '../widgets/common/animated_background.dart';
+import '../widgets/common/glass_card.dart';
+import '../widgets/common/nexus_visual_styles.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -18,7 +20,15 @@ class SplashScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const _LogoMark(),
+                const _LogoMark(
+                  outerColors: [AppColors.brightBlue, AppColors.accentGlow],
+                  glowColor: AppColors.accentGlow,
+                  innerBackgroundColor: AppColors.bgPrimary,
+                  innerBackgroundOpacity: 0.8,
+                  innerBorderColor: Colors.white,
+                  innerBorderOpacity: 0.08,
+                  iconColor: Colors.white,
+                ),
                 const SizedBox(height: 22),
                 Text(
                   AppStrings.appName,
@@ -42,14 +52,16 @@ class SplashScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 26),
-                Container(
+                GlassCard(
                   padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    color: AppColors.bgSecondary.withValues(alpha: 0.72),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: AppColors.purpleGlow.withValues(alpha: 0.18),
-                    ),
+                  style: const GlassCardStyle(
+                    backgroundColor: AppColors.bgSecondary,
+                    backgroundOpacity: 0.72,
+                    borderColor: AppColors.purpleGlow,
+                    borderOpacity: 0.18,
+                    shadowColor: AppColors.accentGlow,
+                    shadowOpacity: 0.12,
+                    borderRadius: 20,
                   ),
                   child: const Column(
                     children: [
@@ -81,7 +93,23 @@ class SplashScreen extends StatelessWidget {
 }
 
 class _LogoMark extends StatelessWidget {
-  const _LogoMark();
+  const _LogoMark({
+    required this.outerColors,
+    required this.glowColor,
+    required this.innerBackgroundColor,
+    required this.innerBackgroundOpacity,
+    required this.innerBorderColor,
+    required this.innerBorderOpacity,
+    required this.iconColor,
+  });
+
+  final List<Color> outerColors;
+  final Color glowColor;
+  final Color innerBackgroundColor;
+  final double innerBackgroundOpacity;
+  final Color innerBorderColor;
+  final double innerBorderOpacity;
+  final Color iconColor;
 
   @override
   Widget build(BuildContext context) {
@@ -90,14 +118,14 @@ class _LogoMark extends StatelessWidget {
       height: 132,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        gradient: const LinearGradient(
-          colors: [AppColors.brightBlue, AppColors.accentGlow],
+        gradient: LinearGradient(
+          colors: outerColors,
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.accentGlow.withValues(alpha: 0.45),
+            color: glowColor.withValues(alpha: 0.45),
             blurRadius: 42,
             spreadRadius: 1,
           ),
@@ -107,10 +135,12 @@ class _LogoMark extends StatelessWidget {
         margin: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: AppColors.bgPrimary.withValues(alpha: 0.8),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+          color: innerBackgroundColor.withValues(alpha: innerBackgroundOpacity),
+          border: Border.all(
+            color: innerBorderColor.withValues(alpha: innerBorderOpacity),
+          ),
         ),
-        child: const Icon(Icons.bolt_rounded, size: 68, color: Colors.white),
+        child: Icon(Icons.bolt_rounded, size: 68, color: iconColor),
       ),
     );
   }

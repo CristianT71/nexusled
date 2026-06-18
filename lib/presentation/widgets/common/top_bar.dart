@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/constants/app_colors.dart';
+
+import 'nexus_visual_styles.dart';
 
 class TopBar extends StatelessWidget {
   const TopBar({
@@ -13,6 +14,7 @@ class TopBar extends StatelessWidget {
     required this.onSearch,
     required this.onNotifications,
     this.notificationCount = 0,
+    this.style = const TopBarStyle(),
   });
 
   final String title;
@@ -23,6 +25,7 @@ class TopBar extends StatelessWidget {
   final VoidCallback onSearch;
   final VoidCallback onNotifications;
   final int notificationCount;
+  final TopBarStyle style;
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +33,10 @@ class TopBar extends StatelessWidget {
       height: 76,
       padding: const EdgeInsets.symmetric(horizontal: 18),
       decoration: BoxDecoration(
-        color: AppColors.purpleDeep.withValues(alpha: 0.62),
+        color: style.backgroundColor.withValues(alpha: style.backgroundOpacity),
         border: Border(
           bottom: BorderSide(
-            color: AppColors.purpleBright.withValues(alpha: 0.18),
+            color: style.borderColor.withValues(alpha: style.borderOpacity),
           ),
         ),
       ),
@@ -66,8 +69,8 @@ class TopBar extends StatelessWidget {
                   top: 9,
                   child: Container(
                     padding: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: AppColors.magenta,
+                    decoration: BoxDecoration(
+                      color: style.notificationBadgeColor,
                       shape: BoxShape.circle,
                     ),
                     child: Text(
@@ -84,10 +87,10 @@ class TopBar extends StatelessWidget {
           ),
           IconButton(
             onPressed: onProfile,
-            icon: const CircleAvatar(
+            icon: CircleAvatar(
               radius: 16,
-              backgroundColor: AppColors.purpleAccent,
-              child: Icon(Icons.person_rounded, size: 18),
+              backgroundColor: style.profileAvatarColor,
+              child: const Icon(Icons.person_rounded, size: 18),
             ),
           ),
         ],

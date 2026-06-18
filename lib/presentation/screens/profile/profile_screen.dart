@@ -7,6 +7,7 @@ import '../../../core/constants/app_colors.dart';
 import '../../../data/models/profile_model.dart';
 import '../../widgets/common/glass_card.dart';
 import '../../widgets/common/nexus_button.dart';
+import '../../widgets/common/nexus_visual_styles.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({
@@ -258,6 +259,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 widget.profile?.authProvider.toUpperCase() ??
                                 'EMAIL',
                             icon: Icons.verified_user_rounded,
+                            backgroundColor: AppColors.bgSecondary,
+                            backgroundOpacity: 0.72,
+                            borderColor: AppColors.textSecondary,
+                            borderOpacity: 0.18,
+                            iconColor: AppColors.neonBlue,
+                            textStyle: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 8,
+                            ),
                           ),
                           _ProfileChip(
                             label: widget.profile?.username.isNotEmpty == true
@@ -332,10 +347,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   });
                                 },
                                 icon: Icons.cancel_rounded,
-                                colors: const [
-                                  Color(0xFF666666),
-                                  Color(0xFF444444),
-                                ],
+                                style: const NexusButtonStyle(
+                                  gradientColors: [
+                                    Color(0xFF64748B),
+                                    Color(0xFF334155),
+                                  ],
+                                  borderColor: Color(0xFF94A3B8),
+                                  borderWidth: 1,
+                                  shadowOpacity: 0.18,
+                                ),
                               ),
                             ),
                           ],
@@ -372,6 +392,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             title: 'Nombre completo',
                             value: displayName,
                             icon: Icons.badge_rounded,
+                            backgroundColor: AppColors.bgSecondary,
+                            backgroundOpacity: 0.72,
+                            borderColor: AppColors.textSecondary,
+                            borderOpacity: 0.16,
+                            iconColor: AppColors.cyanGlow,
+                            titleStyle: const TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 12,
+                            ),
+                            valueStyle: const TextStyle(
+                              color: AppColors.textPrimary,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                            ),
+                            padding: const EdgeInsets.all(16),
                           ),
                         ),
                         SizedBox(
@@ -422,7 +457,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       label: 'CERRAR SESIÓN',
                       onPressed: widget.onLogout,
                       icon: Icons.logout_rounded,
-                      colors: const [Color(0xFF991B1B), AppColors.ledOff],
+                      style: const NexusButtonStyle(
+                        gradientColors: [Color(0xFF991B1B), AppColors.ledOff],
+                        borderColor: Color(0xFFFCA5A5),
+                        borderWidth: 1,
+                      ),
                     ),
                   ],
                 ),
@@ -436,34 +475,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 class _ProfileChip extends StatelessWidget {
-  const _ProfileChip({required this.label, required this.icon});
+  const _ProfileChip({
+    required this.label,
+    required this.icon,
+    this.backgroundColor = AppColors.bgSecondary,
+    this.backgroundOpacity = 0.72,
+    this.borderColor = AppColors.textSecondary,
+    this.borderOpacity = 0.18,
+    this.iconColor = AppColors.neonBlue,
+    this.textStyle,
+    this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+  });
 
   final String label;
   final IconData icon;
+  final Color backgroundColor;
+  final double backgroundOpacity;
+  final Color borderColor;
+  final double borderOpacity;
+  final Color iconColor;
+  final TextStyle? textStyle;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: padding,
       decoration: BoxDecoration(
-        color: AppColors.bgSecondary.withValues(alpha: 0.72),
+        color: backgroundColor.withValues(alpha: backgroundOpacity),
         borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: AppColors.textSecondary.withValues(alpha: 0.18),
-        ),
+        border: Border.all(color: borderColor.withValues(alpha: borderOpacity)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: AppColors.neonBlue),
+          Icon(icon, size: 16, color: iconColor),
           const SizedBox(width: 6),
           Text(
             label,
-            style: const TextStyle(
-              color: AppColors.textPrimary,
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-            ),
+            style: textStyle ??
+                const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
           ),
         ],
       ),
@@ -476,27 +531,41 @@ class _ProfileInfoCard extends StatelessWidget {
     required this.title,
     required this.value,
     required this.icon,
+    this.backgroundColor = AppColors.bgSecondary,
+    this.backgroundOpacity = 0.72,
+    this.borderColor = AppColors.textSecondary,
+    this.borderOpacity = 0.16,
+    this.iconColor = AppColors.cyanGlow,
+    this.titleStyle,
+    this.valueStyle,
+    this.padding = const EdgeInsets.all(16),
   });
 
   final String title;
   final String value;
   final IconData icon;
+  final Color backgroundColor;
+  final double backgroundOpacity;
+  final Color borderColor;
+  final double borderOpacity;
+  final Color iconColor;
+  final TextStyle? titleStyle;
+  final TextStyle? valueStyle;
+  final EdgeInsetsGeometry padding;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: padding,
       decoration: BoxDecoration(
-        color: AppColors.bgSecondary.withValues(alpha: 0.72),
+        color: backgroundColor.withValues(alpha: backgroundOpacity),
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: AppColors.textSecondary.withValues(alpha: 0.16),
-        ),
+        border: Border.all(color: borderColor.withValues(alpha: borderOpacity)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.cyanGlow, size: 22),
+          Icon(icon, color: iconColor, size: 22),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -504,19 +573,21 @@ class _ProfileInfoCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: AppColors.textSecondary,
-                    fontSize: 12,
-                  ),
+                  style: titleStyle ??
+                      const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   value,
-                  style: const TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  style: valueStyle ??
+                      const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                      ),
                 ),
               ],
             ),

@@ -32,5 +32,5 @@ class AppColors {
   static const purpleAccent = brightBlue;
   static const purpleBright = neonBlue;
   static const purpleGlow = accentGlow;
-  static const colorTarjetaAbout = Color.fromARGB(255, 34, 255, 0);
+  static const colorTarjetaAbout = Color.fromARGB(255, 255, 255, 255);
 }

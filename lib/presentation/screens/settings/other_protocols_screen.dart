@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../widgets/common/glass_card.dart';
 import '../../widgets/common/nexus_button.dart';
+import '../../widgets/common/nexus_visual_styles.dart';
 
 class OtherProtocolsScreen extends StatefulWidget {
   const OtherProtocolsScreen({super.key});
@@ -123,11 +124,22 @@ class _OtherProtocolsScreenState extends State<OtherProtocolsScreen> {
                   label: _loading ? 'PROBANDO...' : 'PROBAR PROTOCOLO',
                   onPressed: _loading ? null : _testProtocol,
                   icon: Icons.cable_rounded,
+                  style: const NexusButtonStyle(
+                    gradientColors: [Color(0xFF0F766E), Color(0xFF155E75)],
+                    borderColor: Color(0xFF67E8F9),
+                    borderWidth: 1,
+                    shadowOpacity: 0.22,
+                  ),
                 ),
                 NexusButton(
                   label: 'GUARDAR PROTOCOLO',
                   onPressed: _save,
                   icon: Icons.save_rounded,
+                  style: const NexusButtonStyle(
+                    gradientColors: [AppColors.purpleAccent, AppColors.purpleBright],
+                    borderColor: Color(0xFF93C5FD),
+                    borderWidth: 1,
+                  ),
                 ),
               ],
             ),
